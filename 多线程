@@ -1,0 +1,66 @@
+什么是进程？
+
+是最初定义在Unix等多用户、多任务操作系统环境下用于表示应用程序在内存环境中基本执行单元的慨念
+进程是一个动态的实体，它是程序的一次执行过程，进程是动态的，程序是静态的，进程是运行中的程序，而程序是一些保存在硬盘上的可执行代码，多进程就是运行多个程序。
+进程是操作系统结构的基础；是一个正在执行的程序；计算机中正在运行的程序实例；可以分配给处理器并由处理器执行的一个实体；由单一顺序的执行显示，一个当前状态和一组相关的系统资源所描述的活动单元
+什么是线程？
+线程是控制线程的缩写，它具有一定顺序的指令序列（即所编写的程序代码）、存放方法中定义局部变量的栈和一些分享数据。线程是相互独立的，每个方法的局部变量和其他线程变量是分开的。
+
+多线程是为了同步完成多项任务，不是为了提高运行效率通过提高资源使用效率来提高系统的效率
+进程至少有一个线程
+创建线程的方式
+  1. 继承Thread类，并且覆盖run()方法。
+  2. 创建一个实现Runnable接口的类，使用带参数的Thread构造器来创建Thread对象。
+
+1.创建单线程程序
+//  程序：10.1 OnlyThread.java 描述：只有一个线程
+public class OnlyThread{
+public static void main(String args[ ]){
+run(); //调用静态 run()方法
+}
+//实现 run()方法
+public static void run(){
+for (int count = 1,row = 1; row < 10; row++,count++) {//循环计算输出的*数目
+for (int i = 0; i < count; i++){ //循环输出指定的 count 数目的*
+System.out.print('*'); //输出*号
+}
+System.out.println(); //输出换行符
+}
+}
+}
+
+2.通过Thread创建线程
+java.lang.Thread 类是一个通用的线程类，由于默认情况下 run 方法是空的，直接通过 Thread
+类实例化的线程对象不能完成任何事，所以可以通过派生 Thread 类，并用具体程序代码覆盖
+Thread 类中的 run 方法，实现具有各种不同功能的线程类。在程序中创建新的线程的方法之
+一是继承 Thread 类，并通过 Thread 子类声明线程对象。
+
+//文件：程序 10.2  ThreadDemo1.java 描述：产生一个新的线程
+class ThreadDemo1 extends Thread {
+	
+	// 声明 ThreadDemo1 构造方法
+	ThreadDemo1() {
+	}
+
+	// 声明 ThreadDemo1 带参数的构造方法
+	ThreadDemo1(String szName) {
+		super(szName); // 调用父类的构造方法
+	}
+
+	// 重载 run 函数
+	public void run() {
+		for (int count = 1, row = 1; row < 10; row++, count++) // 循环计算输出的*数目
+		{
+			for (int i = 0; i < count; i++) // 循环输出指定的 count 数目的*
+			{
+				System.out.print('*'); // 输出*
+			}
+			System.out.println(); // 输出换行符
+		}
+	}
+
+	public static void main(String argv[]) {
+		ThreadDemo1 td = new ThreadDemo1(); // 创建，并初始化 ThreadDemo1 类型对象 td
+		td.start(); // 调用 start()方法执行一个新的线程
+	}
+}
