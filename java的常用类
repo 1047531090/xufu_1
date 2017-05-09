@@ -1,0 +1,127 @@
+饿汉模式
+class Singleton
+{
+	///在内部准备好一个对象
+	private static Singleton instance = new Singleton();
+
+	public static Singleton getInstance(){
+		return instance;
+	}
+	private Singleton(){}
+
+	public void show(){
+		System.out.println("Singleton");
+	}
+}
+懒汉模式
+class Singleton{
+	private static Singleton instance = null;
+	public static Singleton getInstance(){// 将instance传递到外部去
+		if(instance == null){
+			instance = new Singleton();
+		}
+		return instance;
+	}
+	private Singleton(){}
+}
+
+
+工厂模式
+interface ICellPhone {
+    void sendMsg();
+}
+class Factory {
+	public static ICellPhone getInstance(String type) {
+		ICellPhone p = null;
+		     if ("htc".equals(type)) {
+			ff = new HTC();
+		     } else if ("iphone".equals(type)) {
+			ff = new IPhone();
+		}
+		return p;
+	}
+
+适配器
+interface IWindow{
+	void max();	
+	void min();
+	void close();
+}
+abstract class WindowAdapter implements IWindow{
+	public void max(){}
+	public void min(){}
+	public void close(){}
+}
+class MyWindow extends WindowAdapter {
+	public void close(){}
+}
+内部类分为：非静态内部类，静态内部类，局部内部类，匿名内	   					   
+                      部类。
+非静态内部类
+
+在外部类以外访问非静态内部类例子
+
+静态内部类例子
+
+在外部类以外访问静态内部类例子
+
+局部内部类
+
+匿名内部类
+
+
+
+
+
+
+
+
+
+
+
+      ○ StringBuffter();和StringBuilder()的区别：
+          ■ 效率低线程安全，效率高线程不安全
+      ○ ArrayList和LinkList的区别：
+          ■ 增删慢查询快，增删快查询慢
+      ○ Hashtable和HashMap的区别：
+          ■ 线程安全速度慢，线程不安全速度快
+      ○ HashSet和TreeSet的区别：
+          ■ 散列储存线程不安全，有序存放线程安全
+
+
+
+
+
+
+
+  ● java常用类
+      ○ StringBuffter();和StringBuilder()的区别
+      ○ 效率低线程安全，效率高线程不安全
+      ○ String final 修饰的     value 属性
+  ● java集合
+      ○ 相当于容器
+      ○ 数组     对象数组
+      ○ 创建完对象后，下一次想用的，必须知道内存地址
+      ○ gc		内存计数器
+      ○ collection
+          ■ list:ArrayList和LinkList
+          ■ 增删慢查询快，增删快查询慢
+          ■ set:HashSet和TreeSet
+          ■ 散列储存线程不安全，有序存放线程安全
+      ○ Map
+          ■ HashMap(常用)
+          ■ Hashtable
+          ■ Treemap
+          ■ 添加	删除		替换		查找		清空		遍历
+  ● javaIo流
+      ○ 写出去     读进来
+                  ○ 输出流		         输入流
+  ● 字节流	    outputstream      inputstream
+  ● 字符流	    writer                  reader
+  ● File操作文件		创建      删除      遍历
+      ○ FileReader
+      ○ FileWriter
+      ○ Fileoutputstream
+      ○ Fileinputstream 
+
+RandomAccessFile
