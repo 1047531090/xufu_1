@@ -1,0 +1,26 @@
+
+get方式
+
+GET（方式） /books/java.html（资源名称） HTTP/1.1（版本号）-----------------请求行
+Accept: */*										-----------------消息头
+Accept-Language: en-us（用的语言）					-----------------消息头
+Connection: Keep-Alive								-----------------消息头
+Host: localhost（主机的信息）							-----------------消息头
+Referer: http://localhost/links.asp（从哪跳过来的）			-----------------消息头
+User-Agent: Mozilla/4.0（客户端的基本信息）			-----------------消息头
+Accept-Encoding: gzip, deflate						-----------------消息头
+                                 -----------------空行
+实体内容
+
+POST方式
+POST /servlet/ParamsServlet HTTP/1.1			-----------------请求行
+	Host:						     			-----------------消息头
+	Content-Type: application/x-www-form-urlencoded-----------------消息头
+	Content-Length: 28							-----------------消息头
+       			 -----------------空行
+	name=abc&password=xyz					-----------------消息实体内容
+
+
+
+
+
