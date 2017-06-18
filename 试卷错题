@@ -1,0 +1,152 @@
+二。
+7.
+java模式之单例模式：
+          单例模式确保一个类只有一个实例，自行提供这个实例并向整个系统提供这个实例。
+ 特点：
+       1，一个类只能有一个实例
+       2，自己创建这个实例
+       3，整个系统都要使用这个实例
+    例: 在下面的对象图中，有一个"单例对象"，而"客户甲"、"客户乙" 和"客户丙"是单例对象的三个客户对象。可以看到，所有的客户对象共享一个单例对象。而且从单例对象到自身的连接线可以看出，单例对象持有对自己的引用。
+
+Singleton模式主要作用是保证在Java应用程序中，一个类Class只有一个实例存在。在很多操作中，比如建立目录 数据库连接都需要这样的单线程操作。一些资源管理器常常设计成单例模式。
+    外部资源：譬如每台计算机可以有若干个打印机，但只能有一个Printer Spooler,以避免两个打印作业同时输出到打印机中。每台计算机可以有若干个通信端口，系统应当集中管理这些通信端口，以避免一个通信端口被两个请求同时调用。内部资源，譬如，大多数的软件都有一个（甚至多个）属性文件存放系统配置。这样的系统应当由一个对象来管理这些属性文件。
+
+一个例子：Windows 回收站。
+在整个视窗系统中，回收站只能有一个实例，整个系统都使用这个惟一的实例，而且回收站自行提供自己的实例。因此，回收站是单例模式的应用。
+
+两种形式：
+1，饿汉式单例类
+public class Singleton {
+
+  private Singleton(){}
+
+  //在自己内部定义自己一个实例，是不是很奇怪？
+  //注意这是private 只供内部调用
+
+  private static Singleton instance = new Singleton();
+
+  //这里提供了一个供外部访问本class的静态方法，可以直接访问  
+  public static Singleton getInstance() {
+    return instance;   
+   } 
+} 
+
+2，懒汉式单例类
+
+public class Singleton { 
+
+  private static Singleton instance = null;
+
+  public static synchronized Singleton getInstance() {
+
+  //这个方法比上面有所改进，不用每次都进行生成对象，只是第一次    
+
+//使用时生成实例，提高了效率！
+  if (instance==null)
+    instance＝new Singleton();
+  return instance;   } 
+
+} 
+
+第二中形式是lazy initialization，也就是说第一次调用时初始Singleton，以后就不用再生成了。
+8.
+                   包外         子类          包内           类内 
+public     	    yes           yes           yes             yes 
+protected      no            yes           yes             yes 
+default          no            no             yes             yes 
+private          no            no             no              yes 
+9.
+ try  catch(先小后大)  finally
+声明抛出异常：throws 
+手动抛出异常：throw
+自定义异常
+extends  Exception或者他的子类
+10.
+jvm：
+JVM -- java virtual machine       JVM就是我们常说的java虚拟机，它是整个java实现跨平台的 最核心的部分，所有的java程序会首先被编译为.class的类文件，这种类文件可 以在虚拟机上执行，也就是说class并不直接与机器的操作系统相对应，而是经过虚拟机间接与操作系统交互，由虚拟机将程序解 释给本地系统执行。      
+JVM 是 Java 平台的基础，和实际的机器一样，它也有自己的指令集，并且在运行 时操作不同的内存区域。 JVM 通过抽象操作系统和 CPU 结构，提供了一种与平台无关的代码执行方法，即与特殊的实现方 法、主机硬件、主机操作系统无关。但是在一些小的方面， JVM 的实现也是互不相同的，比如垃圾回收 算法，线程调度算法（可能不同 OS 有不同的实现）。       
+ JVM 的主要工作是解释自己的指令集（即字节码）到 CPU 的指令集或 OS 的系统调用，保护用户免被恶意程序骚扰。 JVM 对上层的 Java 源文件是不关心的，它关注的只是由源文件生成的类文件（ class file ）。类文件的 组成包括 JVM 指令集，符号表以及一些补助信息。
+synchronized：
+synchronized是java中的一个关键字 我们称其为同步关键字  主要是用来处理java中的同步机制
+Thread ：
+只要继承了Thread类同时覆写了本类中的run()方法就可以实现多线程操作了，但是一个类只能继承一个父类。
+Runnable：
+在程序开发中只要是多线程肯定永远以实现Runnable接口为主，因为实现Runnable接口相比继承Thread类避免点继承的局限，一个类可以继承多个接口和适合于资源的共享。
+Serializable:
+Serializable接口是启用其序列化功能的接口,没有实现此接口的类将不能使它们的任一状态被序列化或逆序列化。
+io流：
+作用：用于处理设备上的数据，如读取数据和写入数据
+流的分类方式：
+1.1、按流向分类：
+       输入流: 读取数据的流，只能进行读操作。
+       输出流: 写入数据的流，只能进行写操作。
+1.2、按数据传输单位分类：
+字节流：以字节（8位二进制）为单位进行处理。以处理所有类型数据，主要用于读写诸如图像或声音的二进制数据。
+字符流：以字符（16位二进制）为单位进行处理。只能用来处理文字等字符。
+结论：只要是处理纯文本数据，就要优先考虑使用字符流。除此之外都用字节流。
+1.3、按功能分类：
+节点流：从特定的地方读写的流类，如磁盘或者一块内存区域。
+过滤流：使用节点流作为输入或输出。过滤流是使用一个已经存在的输入流或者输出流连接创建的。
+
+
+三.
+6，各种类型的几何图形都有自己的面积计算公式，但在一个CAD（计算机辅助设计）软件中，图形的种类非常多，如果程序需要计算出任何一种图形的面积，最简单 的想法是使用条件判断语句根据图形类型来选择相应的计算公式。然而，这种方法不太好，可能会导致嵌套层次很深的条件判断语句。另外，如果软件要扩充功能以支持新的图形种类，则又不得不修改调用不同公式计算图形面积的代码。在学习了面向对象技术之后，你能对上述问题给出一个较好解决方案来吗？请以计算圆形、矩形和三角形三种几何图形的面积为例，列出关键代码。（7分）
+
+import org.omg.CORBA.PRIVATE_MEMBER;  
+  
+interface Tuxing{  
+    double getArea();  
+}  
+  
+class Circle implements Tuxing{  
+  
+    private double r;  
+      
+    public Circle(double r) {  
+        super();  
+        this.r = r;  
+    }  
+  
+    public double getArea() {  
+        return Math.PI*r*r;  
+    }  
+}  
+  
+class Rectangle implements Tuxing{  
+    private double w;  
+    private double h;  
+      
+    public Rectangle(double w, double h) {  
+        super();  
+        this.w = w;  
+        this.h = h;  
+    }  
+  
+    public double getArea() {  
+        return w*h;  
+    }  
+}  
+  
+class Triangle implements Tuxing{  
+  
+    private double a;  
+    private double b;  
+    private double c;  
+
+    public Triangle(double a, double b, double c) {  
+        super();  
+        this.a = a;  
+        this.b = b;  
+        this.c = c;  
+    }  
+    public double getArea() {  
+        double p = (a+b+c)/2;  
+        return Math.sqrt(p*(p-a)*(p-b)*(p-c));  
+    }  
+}  
+public class demo6 {  
+    public static void main(String[] args) {  
+        Tuxing tu = new Triangle(3, 4, 5);  
+        System.out.println(tu.getArea());  
+    }  
+} 
