@@ -1,0 +1,88 @@
+    
+9.1
+索引
+9.1.1
+含义：是一个单独的、存储在磁盘上的数据库结构，包含着对数据表李所有记录的引用指针。
+特点：快速找到数据，提高查询操作速度。
+优点：1)通过创建唯一索引，可以保证数据库表中每一行数据的唯一性。
+      2)可以加快查询速度
+  3)实现数据的参考完整性，加速表之间的连接。
+  4)在分组和排序子句进行数据查询时，减少查询中的分组和排序的时间
+缺点：1)创建索引和维护索引要耗费时间，并且随着数据量的增加所耗费的时间会增加。
+  2)需要站磁盘空间每个索引占一定的物理空间，如果有大量的索引，可能比数据文件更快达到最大文件尺寸。
+  3)当对表中的数据进行增加、删除和修改的时候，索引也要动态的维护，这样就降低了数据的维护速度。
+9.1.2
+索引的分类
+1)普通索引与唯一索引
+普通：基本索引类型， 允许在定义索引的累中插入重复值和空置。
+唯一：索引类的值必须唯一，但允许有空置。如果是组合索引，则列植的组合必须唯一。主键索引是一种特殊的唯一索引，不允许有空值。
+2)单列索引和组合索引
+单列索：即一个索引只包含单个列，一个表可以有多个单列索引。
+组合索引：指在表的多个字段组合上创建索引，只有在查询条件和使用了这些字段的左边字段时，索引才会被使用。使用组合索引时遵循最左前缀集合。
+3)全文索引
+全文索引：类型为FULLTEXT，在定义索引的列上支持值的全文查找，允许在这些索引列中插入重复值和空值。全文索引可以在char,varchar或者text烈性的列上创建。MySQL中只有MyISAM存储引擎支持全文索引。
+4)空间索引
+空间索引：是对空间数据类型的字段建立的索引，MySQL中的空间数据烈性有geometry，point，linestring与polygon   4种，MySQL使用spatial关键字进行扩展，是的能够用于创建正规索引类似的语法创建空间索引。创建空间索引得列必须将其声明为not null，空间索引只能在存储引擎为myisam的表中创建。
+9.1.3
+9.2
+创建索引
+9.2.1
+创建表的时候创建索引
+Create table table_name [ col_name data_type ]
+[ unique | fulltext | spatial ][ index | key ][index_name](col_name [ length ]) [ ASC | DESC ]
+( UNIQUE-唯一、FULLTEXT-分别 和 SPATIAL-空间 为可选参数)
+( INDEX 与 KEY 为同义词，用来指定创建索引)
+(col_name 为需要创建索引的字段列，该列必须从数据中)
+1)创建普通索引 INDEX(索引名)
+例：
+create table book(
+bookid int not null,
+bookname varchar(255) not null,
+authors varchar(255) not null,
+info varchar(255) null,
+comment varchar(255) null,
+year_publication year not null,
+index(year_publication)
+);
+
+show create table boook\G;
+CREATE TABLE `book` (
+  `bookid` int(11) NOT NULL,
+  `bookname` varchar(255) NOT NULL,
+  `authors` varchar(255) NOT NULL,
+  `info` varchar(255) DEFAULT NULL,
+  `comment` varchar(255) DEFAULT NULL,
+  `year_publication` year(4) NOT NULL,
+  KEY `year_publication` (`year_publication`) ( 其索引名称：year_publication 为MySQL自动添加）
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+mysql> explain select * from book where year_publication=1990\G;
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE （select_type行指定所使用的select查询类型，这里值为simple，表名简单的select不适用union或子查询。其他取值可能有 primary、union、 subquery等。）
+        table: book  （table行指定数据库读取的数据表的名字，他们按被读取的前后顺序排列。）
+         type: ref （type行指定了本数据表与其他数据表指甲呢关联关系，可能取值有 system、const、eq_ref、ref、range、index和all）
+possible_keys: year_publication ( possible_keys 行给出了MySQL在搜索数据记录时可选用的各个索引。)
+          key: year_publication  （key 行是MySQL实际选用的索引。）
+      key_len: 1（key_len行给出索引按字节计算的长度，key_len数值越小，表示越快。）
+          ref: const（ref行给出了关联关系中另一个数据表里的数据列的名字。）
+         rows: 1（rows行是MySQL在执行这个查询时预计会从这个数据表里读出的数据行的个数。）
+        Extra:（extra行提供了与关联操作有关的信息。）
+（possible_keys和key 的值都为year_prblication，查询时使用了索引。）
+
+2)创建唯一索引 UNIQUE INDEX 索引名（字段名）
+3)创建单列索引 INDEX 索引名（字段名（索引长度））
+4)创建组合索引 INDEX 索引名（字段1，字段二，。。。字段n（索引长度））
+5)创建全文索引 FULLTEXT INDEX 索引名（字段名）【注：引擎必须为myisam，否则出错】
+6)创建空间索引 SPATIAL INDEX 索引名（字段名）【注：引擎必须为myisam，否则出错】
+9.2.2 在已经存在的表上创建索引
+1.使用 ALTER TABLE 语句创建索引
+ALTER TABLE 表名 ADD [ UNIQUE | FULLTEXT | SPATIAL ] [ INDEX | KEY ] 索引名（字段名（索引长度））[ ASC | DESC ]；
+2.使用CREATE INDEX 创建索引
+create [ UNIQUE | FULLTEXT | SPATIAL ] INDEX 索引名 ON 表名；
+9.3 删除索引
+1. 使用 ALTER TABLE 删除索引
+ALTER TABLE 表名 DROP INDEX 索引名；
+2. 使用 DROP INDEX 语句删除索引
+DROP INDEX 索引名 ON 表名；  [ UNIQUE | FULLTEXT | SPATIAL ]（添加了auto_increment约束字段的唯一索引不能被删除）
+ 
