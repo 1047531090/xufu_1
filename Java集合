@@ -1,134 +1,135 @@
+
 1.Java集合类主要由两个接口派生：Collection和Map
 
 2.使用Iterator接口遍历集合元素，Iterator对象依附于Collection对象。使用Iterator迭代访问Collection集合元素时，集合里的元素不能被改变
 3.foreach，也不能修改迭代变量的值
 
-1290public class ForeachTest  
-1291{  
-1292    public static void main(String[] args)   
-1293    {  
-1294        //创建一个集合  
-1295        Collection books = new HashSet();  
-1296        books.add(new String("轻量级Java EE企业应用实战"));  
-1297        books.add(new String("疯狂Java讲义"));  
-1298        books.add(new String("疯狂Android讲义"));  
-1299        for (Object obj : books)  
-1300        {  
-1301            <span style="color:#ff0000;">//此处的book变量也不是集合元素本身</span>  
-1302            String book = (String)obj;  
-1303            System.out.println(book);  
-1304            if (book.equals("疯狂Android讲义"))  
-1305            {  
-1306                //下面代码会引发ConcurrentModificationException异常  
-1307                books.remove(book);     //①  
-1308            }  
-1309        }  
-1310        System.out.println(books);  
-1311    }  
-1312}  
+public class ForeachTest
+{
+    public static void main(String[] args)
+    {
+        //创建一个集合
+        Collection books = new HashSet();
+        books.add(new String("轻量级Java EE企业应用实战"));
+        books.add(new String("疯狂Java讲义"));
+        books.add(new String("疯狂Android讲义"));
+        for (Object obj : books)
+        {
+            <span style="color:#ff0000;">//此处的book变量也不是集合元素本身</span>
+            String book = (String)obj;
+            System.out.println(book);
+            if (book.equals("疯狂Android讲义"))
+            {
+                //下面代码会引发ConcurrentModificationException异常
+                books.remove(book);     //①
+            }
+        }
+        System.out.println(books);
+    }
+}
 4.Set集合中判断两个对象是否相同不是使用==运算，而是根据equals
 5.HashSet需要通过代码来保证同步性，集合元素值可以是null，HashSet是通过equals和hashCode中的一个或者全部来判断元素相同,如果需要把某个类的对象保存到HashSet集合中，重写这个类的equals方法和hashCode方法时，应尽量保证两个对象通过equals方法比较是返回true时，它们的hashCode方法返回值也相等
 6.hashCode方法基本规则：同一个对象多次调用hashCode方法应该返回相同的值；equals方法比较返回true时，这两个对象的hashCode方法应该返回相等的值；equals方法比较标准的Field，都应该用来计算hashCode值
 
 将对象内每个有意义的Field计算出一个int类型的hashCode；组合之前计算的多个hashCode值计算出一个hashCode值返回（可以通过为各Field乘以任意一个质数后再相加来避免直接想家产生偶然相等。当向hashSet中添加可变对象时可能导致该独享与集合中的其他对象相等，从而导致HashSet无法准确访问该对象
 
-1313class R  
-1314{  
-1315    int count;  
-1316    public R(int count)  
-1317    {  
-1318        this.count = count;  
-1319    }  
-1320    public String toString()  
-1321    {  
-1322        return "R[count:" + count + "]";  
-1323    }  
-1324    public boolean equals(Object obj)  
-1325    {  
-1326        if(this == obj)  
-1327            return true;  
-1328        if (obj != null && obj.getClass() == R.class)  
-1329        {  
-1330            R r = (R)obj;  
-1331            if (r.count == this.count)  
-1332            {  
-1333                return true;  
-1334            }  
-1335        }  
-1336        return false;  
-1337    }  
-1338    public int hashCode()  
-1339    {  
-1340        return this.count;  
-1341    }  
-1342}  
-1343public class HashSetTest2  
-1344{  
-1345    public static void main(String[] args)   
-1346    {  
-1347        HashSet hs = new HashSet();  
-1348        hs.add(new R(5));  
-1349        hs.add(new R(-3));  
-1350        hs.add(new R(9));  
-1351        hs.add(new R(-2));  
-1352        //打印HashSet集合，集合元素没有重复  
-1353        System.out.println(hs);  
-1354        //取出第一个元素  
-1355        Iterator it = hs.iterator();  
-1356        R first = (R)it.next();  
-1357        //为第一个元素的count实例变量赋值  
-1358        first.count = -3;     //①  
-1359        //再次输出HashSet集合，集合元素有重复元素  
-1360        System.out.println(hs);  
-1361        //删除count为-3的R对象  
-1362        hs.remove(new R(-3));   //  
-1363        //可以看到被删除了一个R元素  
-1364        System.out.println(hs);  
-1365        //输出false  
-1366        System.out.println("hs是否包含count为-3的R对象？"  
-1367            + hs.contains(new R(-3)));  
-1368        //输出false  
-1369        System.out.println("hs是否包含count为5的R对象？"  
-1370            + hs.contains(new R(5)));  
-1371    }  
-1372}  
+ass R
+{
+    int count;
+    public R(int count)
+    {
+        this.count = count;
+    }
+    public String toString()
+    {
+        return "R[count:" + count + "]";
+    }
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+        if (obj != null && obj.getClass() == R.class)
+        {
+            R r = (R)obj;
+            if (r.count == this.count)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int hashCode()
+    {
+        return this.count;
+    }
+}
+public class HashSetTest2
+{
+    public static void main(String[] args)
+    {
+        HashSet hs = new HashSet();
+        hs.add(new R(5));
+        hs.add(new R(-3));
+        hs.add(new R(9));
+        hs.add(new R(-2));
+        //打印HashSet集合，集合元素没有重复
+        System.out.println(hs);
+        //取出第一个元素
+        Iterator it = hs.iterator();
+        R first = (R)it.next();
+        //为第一个元素的count实例变量赋值
+        first.count = -3;     //①
+        //再次输出HashSet集合，集合元素有重复元素
+        System.out.println(hs);
+        //删除count为-3的R对象
+        hs.remove(new R(-3));   //
+        //可以看到被删除了一个R元素
+        System.out.println(hs);
+        //输出false
+        System.out.println("hs是否包含count为-3的R对象？"
+            + hs.contains(new R(-3)));
+        //输出false
+        System.out.println("hs是否包含count为5的R对象？"
+            + hs.contains(new R(5)));
+    }
+}
 先计算hashcode找到桶，再按照equals来判断是否相等，hs.remove(new R(-3));计算该对象的hashcode后与第三个元素所在桶一致，equals也相等则包含。hs.contains(new R(5))计算hashcode与第一个元素所在桶一直，equals则不想等，所以不包含
 7.LinkedHashSet是HashSet子类，需要使用链表维护元素的次序；TreeSet是SortedSet接口的实现类，可以确保集合元素处于排序状态；通过实现Comparable接口，来实现对该类对象的比较，在TreeSet中插入元素时，会自动调用元素的compareTo方法，如果添加到TreeSet中的类对象没有compareTo方法，会抛出异常。equals方法返回true时，comparaTo应该返回0
 8.可以通过Comparator接口实现定制排序
 
-1373class M  
-1374{  
-1375    int age;  
-1376    public M(int age)  
-1377    {  
-1378        this.age = age;  
-1379    }  
-1380    public String toString()  
-1381    {  
-1382        return "M[age:" + age + "]";  
-1383    }  
-1384}  
-1385public class TreeSetTest4  
-1386{  
-1387    public static void main(String[] args)   
-1388    {  
-1389        TreeSet ts = new TreeSet(new Comparator()  
-1390        {  
-1391            //根据M对象的age属性来决定大小  
-1392            public int compare(Object o1, Object o2)  
-1393            {  
-1394                M m1 = (M)o1;  
-1395                M m2 = (M)o2;  
-1396                return m1.age > m2.age ? -1  
-1397                    : m1.age < m2.age ? 1 : 0;  
-1398            }  
-1399        });   
-1400        ts.add(new M(5));  
-1401        ts.add(new M(-3));  
-1402        ts.add(new M(9));  
-1403        System.out.println(ts);  
-1404    }  
-1405}  
+class M
+{
+    int age;
+    public M(int age)
+    {
+        this.age = age;
+    }
+    public String toString()
+    {
+        return "M[age:" + age + "]";
+    }
+}
+public class TreeSetTest4
+{
+    public static void main(String[] args)
+    {
+        TreeSet ts = new TreeSet(new Comparator()
+        {
+            //根据M对象的age属性来决定大小
+            public int compare(Object o1, Object o2)
+            {
+                M m1 = (M)o1;
+                M m2 = (M)o2;
+                return m1.age > m2.age ? -1
+                    : m1.age < m2.age ? 1 : 0;
+            }
+        });
+        ts.add(new M(5));
+        ts.add(new M(-3));
+        ts.add(new M(9));
+        System.out.println(ts);
+    }
+}
 创建了一个Comparator接口的匿名内部类对象，该对象负责ts集合的排序，可以无需实现Comparable接口，由TreeSet关联的Comparator对象负责集合元素的排序
 9.EnumSet是专为枚举类设计的集合类，其中的元素必须是指定枚举类型的枚举值，其中的元素是有序的，以枚举值在Enum类内的定义顺序来决定集合元素的顺序。不允许加入null
 10.HashSet、TreeSet和EnumSet都是线程不安全的，必须手动保证该Set集合的线程安全，通常可以通过Collections工具类sysnchronizedSortedSet方法来“包装”该Set集合
@@ -141,56 +142,56 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...))
 16.LinkedHashMap链表维护Map的迭代顺序，与插入顺序保持一致
 17.EnumMap是一个与枚举类一起使用的Map实现，所有key都必须是单个枚举类的枚举值。根据key的自然顺序来维护key-value对的顺序。创建EnumMap时必须指定一个枚举类
 
-1406enum Season  
-1407{  
-1408    SPRING,SUMMER,FALL,WINTER  
-1409}  
-1410public class EnumMapTest  
-1411{  
-1412    public static void main(String[] args)   
-1413    {  
-1414        //创建一个EnumMap对象，该EnumMap的所有key  
-1415        //必须是Season枚举类的枚举值  
-1416        EnumMap enumMap = new EnumMap(Season.class);  
-1417        enumMap.put(Season.SUMMER , "夏日炎炎");  
-1418        enumMap.put(Season.SPRING , "春暖花开");  
-1419        System.out.println(enumMap);  
-1420    }  
-1421}  
+enum Season
+{
+    SPRING,SUMMER,FALL,WINTER
+}
+public class EnumMapTest
+{
+    public static void main(String[] args)
+    {
+      //创建一个EnumMap对象，该EnumMap的所有key
+        //必须是Season枚举类的枚举值
+        EnumMap enumMap = new EnumMap(Season.class);
+        enumMap.put(Season.SUMMER , "夏日炎炎");
+        enumMap.put(Season.SPRING , "春暖花开");
+        System.out.println(enumMap);
+    }
+}
 18.HashSet与HashMap的性能选项：容量-capacity，初始化容量-initial capacity，尺寸-size，负载因子-load factor19.Collections工具类，提供了排序、查找、替换操作和同步控制（通过synchronizedXxx()方法将指定集合包装成线程同步的集合，解决多线程并发访问集合时的线程安全问题）
 
-1422public class SynchronizedTest  
-1423{  
-1424    public static void main(String[] args)  
-1425    {  
-1426        //下面程序创建了四个同步的集合对象  
-1427        Collection c = Collections  
-1428            .synchronizedCollection(new ArrayList());  
-1429        List list = Collections.synchronizedList(new ArrayList());   
-1430        Set s = Collections.synchronizedSet(new HashSet());   
-1431        Map m = Collections.synchronizedMap(new HashMap());   
-1432    }  
-1433}  
+public class SynchronizedTest
+{
+    public static void main(String[] args)
+    {
+        //下面程序创建了四个同步的集合对象
+        Collection c = Collections
+            .synchronizedCollection(new ArrayList());
+        List list = Collections.synchronizedList(new ArrayList());
+        Set s = Collections.synchronizedSet(new HashSet());
+        Map m = Collections.synchronizedMap(new HashMap());
+    }
+}
 返回不可变集合：emptyXxx()、singletonXxx()、unmodifiableXxx()
 
 
-1434public class UnmodifiableTest  
-1435{  
-1436    public static void main(String[] args)  
-1437    {  
-1438        //创建一个空的、不可改变的List对象  
-1439        List unmodifiableList = Collections.emptyList();  
-1440        //创建一个只有一个元素，且不可改变的Set对象  
-1441        Set unmodifiableSet = Collections.singleton("疯狂Java讲义");  
-1442        //创建一个普通Map对象  
-1443        Map scores = new HashMap();  
-1444        scores.put("语文" , 80);  
-1445        scores.put("Java" , 82);  
-1446        //返回普通Map对象对应的不可变版本  
-1447        Map unmodifiableMap = Collections.unmodifiableMap(scores);  
-1448        //下面任意一行代码都将引发UnsupportedOperationException异常  
-1449        unmodifiableList.add("测试元素");   //①  
-1450        unmodifiableSet.add("测试元素");   //②  
-1451        unmodifiableMap.put("语文" , 90);   //③  
-1452    }  
-1453}  
+public class UnmodifiableTest
+{
+    public static void main(String[] args)
+    {
+        //创建一个空的、不可改变的List对象
+        List unmodifiableList = Collections.emptyList();
+        //创建一个只有一个元素，且不可改变的Set对象
+        Set unmodifiableSet = Collections.singleton("疯狂Java讲义");
+        //创建一个普通Map对象
+        Map scores = new HashMap();
+        scores.put("语文" , 80);
+        scores.put("Java" , 82);
+        //返回普通Map对象对应的不可变版本
+        Map unmodifiableMap = Collections.unmodifiableMap(scores);
+        //下面任意一行代码都将引发UnsupportedOperationException异常
+        unmodifiableList.add("测试元素");   //①
+        unmodifiableSet.add("测试元素");   //②
+        unmodifiableMap.put("语文" , 90);   //③
+    }
+}
