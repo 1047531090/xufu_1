@@ -1,162 +1,162 @@
 1.创建了带泛型声明的接口、父类之后，可以为该接口创建实现类，或从该父类派生子类，父类不能再包含类型形参，必须指定
 
-1454public class A extends Apple<T> {...}  \\错误  
+public class A extends Apple<T> {...}  \\错误
 
-1455public class A extends Apple<String> {...}  \\正确  
-子类重写父类方法时需要将T换成具体的类型
+    public class A extends Apple<String> {...}  \\正确
+        子类重写父类方法时需要将T换成具体的类型
 
-1456public class A1 extends Apple<String>  
-1457{  
-1458    // 正确重写了父类的方法，返回值  
-1459    // 与父类Apple<String>的返回值完全相同  
-1460    public String getInfo()  
-1461    {  
-1462        return "子类" + super.getInfo();  
-1463    }  
-1464    /* 
-1465    // 下面方法是错误的，重写父类方法时返回值类型不一致 
-1466    public Object getInfo() 
-1467    { 
-1468        return "子类"; 
-1469    } 
-1470    */  
-1471}  
-如果使用Apple时没有传入实际的类型参数，将默认使用Object
-2.不管为泛型类传入哪一种类型实参，对于Java来说，他们依然被当成同一个类处理，在内存中也只占用一块内存空间，因此在静态方法、静态初始化块或者静态变量的声明和初始化中不允许使用类型形参
+        public class A1 extends Apple<String>
+            {
+                // 正确重写了父类的方法，返回值
+                // 与父类Apple<String>的返回值完全相同
+                public String getInfo()
+                {
+                    return "子类" + super.getInfo();
+                }
+                /*
+                // 下面方法是错误的，重写父类方法时返回值类型不一致
+                public Object getInfo()
+                {
+                    return "子类";
+                }
+                */
+            }
+            如果使用Apple时没有传入实际的类型参数，将默认使用Object
+            2.不管为泛型类传入哪一种类型实参，对于Java来说，他们依然被当成同一个类处理，在内存中也只占用一块内存空间，因此在静态方法、静态初始化块或者静态变量的声明和初始化中不允许使用类型形参
 
-1472List<String> l1 = new ArrayList<>();  
-1473List<Integer> l2 = new ArrayList<>();  
-1474System.out.println(l1.getClass() == l2.getClass()); //实际输出为true  
-由于系统并不会真正生成泛型类，所以instanceof运算符后不能使用泛型类
-3.如果Foo是Bar的一个子类型，而G是具有泛型声明的类或接口，G<Foo>并不是G<Bar>的子类，即List<String>不是List<Object>子类，而数组中Foo[]是Bar[]的子类型
-4.类型通配符？，List<?>位置类型的List，元素类型可以匹配任何类型，元素为Object，这个List集合可以是任何泛型List的父类
-5.被限制的通配符，List<? extends Shape>表示元素为Shape的子类，未知类型一定是Shape子类，Shape为通配符的上限
-6.定义类型形参时设定上限，用于表示传给该类型形参的实际类型要么是该上限类型，要么是该上限类型的子类。
+            List<String> l1 = new ArrayList<>();
+                List<Integer> l2 = new ArrayList<>();
+                    System.out.println(l1.getClass() == l2.getClass()); //实际输出为true
+                    由于系统并不会真正生成泛型类，所以instanceof运算符后不能使用泛型类
+                    3.如果Foo是Bar的一个子类型，而G是具有泛型声明的类或接口，G<Foo>并不是G<Bar>的子类，即List<String>不是List<Object>子类，而数组中Foo[]是Bar[]的子类型
+                        4.类型通配符？，List<?>位置类型的List，元素类型可以匹配任何类型，元素为Object，这个List集合可以是任何泛型List的父类
+                        5.被限制的通配符，List<? extends Shape>表示元素为Shape的子类，未知类型一定是Shape子类，Shape为通配符的上限
+                        6.定义类型形参时设定上限，用于表示传给该类型形参的实际类型要么是该上限类型，要么是该上限类型的子类。
 
-1475public class Apple<T extends Number>  
-1476{  
-1477    T col;  
-1478    public static void main(String[] args)  
-1479    {  
-1480        Apple<Integer> ai = new Apple<>();  
-1481        Apple<Double> ad = new Apple<>();  
-1482        // 下面代码将引起编译异常，下面代码试图把String类型传给T形参  
-1483        // 但String不是Number的子类型，所以引发编译错误  
-1484        Apple<String> as = new Apple<>();       //①  
-1485    }  
-1486}  
-更极端的情况需要为类型形参设定多个上限（至多有一个父类上限，可以有多个接口上限）
+                        public class Apple<T extends Number>
+                            {
+                                T col;
+                                public static void main(String[] args)
+                                {
+                                    Apple<Integer> ai = new Apple<>();
+                                    Apple<Double> ad = new Apple<>();
+                                        // 下面代码将引起编译异常，下面代码试图把String类型传给T形参
+                                        // 但String不是Number的子类型，所以引发编译错误
+                                        Apple<String> as = new Apple<>();       //①
+                                        }
+                                    }
+                                    更极端的情况需要为类型形参设定多个上限（至多有一个父类上限，可以有多个接口上限）
 
-1487public class Apple<T extends Number & java.io.Serializabel> {...}  
-7.泛型方法需要在方法前指明类型参数
-修饰符 <T,S> 返回值类型 方法名(形参列表) { ... }
+                                    public class Apple<T extends Number & java.io.Serializabel> {...}
+                                        7.泛型方法需要在方法前指明类型参数
+                                        修饰符 <T,S> 返回值类型 方法名(形参列表) { ... }
 
-1488public class GenericMethodTest  
-1489{  
-1490    // 声明一个泛型方法，该泛型方法中带一个T类型形参，  
-1491    static <T> void fromArrayToCollection(T[] a, Collection<T> c)  
-1492    {  
-1493        for (T o : a)  
-1494        {  
-1495            c.add(o);  
-1496        }  
-1497    }  
-1498    public static void main(String[] args)   
-1499    {  
-1500        Object[] oa = new Object[100];  
-1501        Collection<Object> co = new ArrayList<>();  
-1502        // 下面代码中T代表Object类型  
-1503        <Object> fromArrayToCollection(oa, co);  
-1504        String[] sa = new String[100];  
-1505        Collection<String> cs = new ArrayList<>();  
-1506        // 下面代码中T代表String类型  
-1507        fromArrayToCollection(sa, cs);  
-1508        // 下面代码中T代表Object类型  
-1509        fromArrayToCollection(sa, co);  
-1510        Integer[] ia = new Integer[100];  
-1511        Float[] fa = new Float[100];  
-1512        Number[] na = new Number[100];  
-1513        Collection<Number> cn = new ArrayList<>();   
-1514        // 下面代码中T代表Number类型  
-1515        fromArrayToCollection(ia, cn);  
-1516        // 下面代码中T代表Number类型  
-1517        fromArrayToCollection(fa, cn);   
-1518        // 下面代码中T代表Number类型  
-1519        fromArrayToCollection(na, cn);  
-1520        // 下面代码中T代表Object类型  
-1521        fromArrayToCollection(na, co);  
-1522        // 下面代码中T代表String类型，但na是一个Number数组，  
-1523        // 因为Number既不是String类型，  
-1524        // 也不是它的子类，所以出现编译错误  
-1525        //fromArrayToCollection(na, cs);  
-1526    }  
-1527}  
-<>中的T代表泛型参数，而数组的T不代表泛型参数，编译器通过泛型参数来确定类型。不要制造迷惑，系统一旦迷惑，就出错了
+                                        public class GenericMethodTest
+                                        {
+                                            // 声明一个泛型方法，该泛型方法中带一个T类型形参，
+                                            static <T> void fromArrayToCollection(T[] a, Collection<T> c)
+                                                {
+                                                    for (T o : a)
+                                                    {
+                                                        c.add(o);
+                                                    }
+                                                }
+                                                public static void main(String[] args)
+                                                {
+                                                    Object[] oa = new Object[100];
+                                                    Collection<Object> co = new ArrayList<>();
+                                                        // 下面代码中T代表Object类型
+                                                        <Object> fromArrayToCollection(oa, co);
+                                                            String[] sa = new String[100];
+                                                            Collection<String> cs = new ArrayList<>();
+                                                                // 下面代码中T代表String类型
+                                                                fromArrayToCollection(sa, cs);
+                                                                // 下面代码中T代表Object类型
+                                                                fromArrayToCollection(sa, co);
+                                                                Integer[] ia = new Integer[100];
+                                                                Float[] fa = new Float[100];
+                                                                Number[] na = new Number[100];
+                                                                Collection<Number> cn = new ArrayList<>();
+                                                                // 下面代码中T代表Number类型
+                                                                  fromArrayToCollection(ia, cn);
+                                                                    // 下面代码中T代表Number类型
+                                                                    fromArrayToCollection(fa, cn);
+                                                                    // 下面代码中T代表Number类型
+                                                                    fromArrayToCollection(na, cn);
+                                                                    // 下面代码中T代表Object类型
+                                                                    fromArrayToCollection(na, co);
+                                                                    // 下面代码中T代表String类型，但na是一个Number数组，
+                                                                    // 因为Number既不是String类型，
+                                                                    // 也不是它的子类，所以出现编译错误
+                                                                    //fromArrayToCollection(na, cs);
+                                                                }
+                                                            }
+                                                            <>中的T代表泛型参数，而数组的T不代表泛型参数，编译器通过泛型参数来确定类型。不要制造迷惑，系统一旦迷惑，就出错了
 
-1528public class ErrorTest  
-1529{  
-1530    // 声明一个泛型方法，该泛型方法中带一个T类型形参  
-1531    static <T> void test(Collection<T> from, Collection<T> to)  
-1532    {  
-1533        for (T ele : from)  
-1534        {  
-1535            to.add(ele);  
-1536        }  
-1537    }  
-1538    public static void main(String[] args)   
-1539    {  
-1540        List<Object> as = new ArrayList<>();  
-1541        List<String> ao = new ArrayList<>();  
-1542        // 下面代码将产生编译错误  
-1543        test(as , ao);  
-1544    }  
-1545}  
-改为如下形式即可 static <T> void test(Collection<? extends T> from , Collection<T> to)
+                                                            public class ErrorTest
+                                                            {
+                                                                // 声明一个泛型方法，该泛型方法中带一个T类型形参
+                                                                static <T> void test(Collection<T> from, Collection<T> to)
+                                                                    {
+                                                                        for (T ele : from)
+                                                                        {
+                                                                            to.add(ele);
+                                                                        }
+                                                                    }
+                                                                    public static void main(String[] args)
+                                                                    {
+                                                                        List<Object> as = new ArrayList<>();
+                                                                            List<String> ao = new ArrayList<>();
+                                                                                // 下面代码将产生编译错误
+                                                                                test(as , ao);
+                                                                            }
+                                                                        }
+                                                                        改为如下形式即可 static <T> void test(Collection<? extends T> from , Collection<T> to)
 
-1546public class RightTest  
-1547{  
-1548    // 声明一个泛型方法，该泛型方法中带一个T形参  
-1549    static <T> void test(Collection<? extends T> from , Collection<T> to)  
-1550    {  
-1551        for (T ele : from)  
-1552        {  
-1553            to.add(ele);  
-1554        }  
-1555    }  
-1556    public static void main(String[] args)   
-1557    {  
-1558        List<Object> ao = new ArrayList<>();  
-1559        List<String> as = new ArrayList<>();  
-1560        // 下面代码完全正常  
-1561        test(as , ao);  
-1562    }  
-1563}  
-8.大多数时候可以使用泛型方法来代替类型通配符
-9.<? super Type>这个通配符表示它必须是Type本身，或是Type的父类，即设定了通配符的下限
+                                                                            public class RightTest
+                                                                            {
+                                                                                // 声明一个泛型方法，该泛型方法中带一个T形参
+                                                                                static <T> void test(Collection<? extends T> from , Collection<T> to)
+                                                                                    {
+                                                                                        for (T ele : from)
+                                                                                        {
+                                                                                            to.add(ele);
+                                                                                        }
+                                                                                    }
+                                                                                    public static void main(String[] args)
+                                                                                    {
+                                                                                        List<Object> ao = new ArrayList<>();
+                                                                                            List<String> as = new ArrayList<>();
+                                                                                                // 下面代码完全正常
+                                                                                                test(as , ao);
+                                                                                            }
+                                                                                        }
+                                                                                        8.大多数时候可以使用泛型方法来代替类型通配符
+                                                                                        9.<? super Type>这个通配符表示它必须是Type本身，或是Type的父类，即设定了通配符的下限
 
-1564public class MyUtils  
-1565{  
-1566    // 下面dest集合元素类型必须与src集合元素类型相同，或是其父类  
-1567    public static <T> T copy(Collection<? super T> dest   
-1568        , Collection<T> src)  
-1569    {  
-1570        T last = null;  
-1571        for (T ele  : src)  
-1572        {  
-1573            last = ele;  
-1574            dest.add(ele);  
-1575        }  
-1576        return last;  
-1577    }  
-1578    public static void main(String[] args)   
-1579    {  
-1580        List<Number> ln = new ArrayList<>();  
-1581        List<Integer> li = new ArrayList<>();  
-1582        li.add(5);  
-1583        // 此处可准确的知道最后一个被复制的元素是Integer类型  
-1584        // 与src集合元素的类型相同  
-1585        Integer last = copy(ln , li);    // ①  
-1586        System.out.println(ln);  
-1587    }  
-1588}  
-这样不会丢失返回类型
+                                                                                        public class MyUtils
+                                                                                        {
+                                                                                            // 下面dest集合元素类型必须与src集合元素类型相同，或是其父类
+                                                                                            public static <T> T copy(Collection<? super T> dest
+                                                                                                    , Collection<T> src)
+                                                                                                    {
+                                                                                                        T last = null;
+                                                                                                        for (T ele  : src)
+                                                                                                        {
+                                                                                                            last = ele;
+                                                                                                            dest.add(ele);
+                                                                                                        }
+                                                                                                        return last;
+                                                                                                    }
+                                                                                                    public static void main(String[] args)
+                                                                                                    {
+                                                                                                        List<Number> ln = new ArrayList<>();
+                                                                                                            List<Integer> li = new ArrayList<>();
+                                                                                                                li.add(5);
+                                                                                                                // 此处可准确的知道最后一个被复制的元素是Integer类型
+                                                                                                                // 与src集合元素的类型相同
+                                                                                                                Integer last = copy(ln , li);    // ①
+                                                                                                                System.out.println(ln);
+                                                                                                            }
+                                                                                                        }
+                                                                                                        这样不会丢失返回类型
