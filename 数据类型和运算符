@@ -1,0 +1,32 @@
+1.注释，单行注释//  ,多行注释 /* .... */，文档注释/**  ... */
+2.注释中常用标记@author指定java程序作者，@version指定源文件的版本，@deprecated不推荐使用的方法，@param方法的参数说明信息，@return方法的返回值说明信息，@see参见，关于指定交叉参考的内容，@exception抛出异常类型，@throws抛出的异常，和exception同意。
+类或接口文档中的标记@see、@deprecated、@author、@version；方法或构造器文档中的标记@see、@deprecated、@param、@return、@throws和@exception等；出现在Field文档注释中的有@see、@deprecated等
+         [java] view plain copy print?
+
+1package yeeku;  
+2  
+3/** 
+4 * Description: 
+5 * <br/>网站: <a href="http://www.crazyit.org">疯狂Java联盟</a>  
+6 * <br/>Copyright (C), 2001-2012, Yeeku.H.Lee 
+7 * <br/>This program is protected by copyright laws. 
+8 * <br/>Program Name: 
+9 * <br/>Date: 
+10 * @author Yeeku.H.Lee kongyeeku@163.com 
+11 * @version 1.0 
+12 */  
+13public class JavadocTagTest  
+14{  
+15    /** 
+16     * 一个得到打招呼字符串的方法。 
+17     * @param name 该参数指定向谁打招呼。 
+18     * @return 返回打招呼的字符串。 
+19     */  
+20    public String hello(String name)  
+21    {  
+22        return name + "，你好！";  
+23    }  
+24}  
+
+3.标识符中可以包含$符号
+4.Java语言指出的类型，基本类型（primitive type）：int等，引用类型（reference type）：类、接口、数组、null
