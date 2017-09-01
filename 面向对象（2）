@@ -1,0 +1,593 @@
+1.==和equals，==用来判断两个对象是否相等（基本类型时，只要值相等，引用类型时，必须指向同一个对象），equals用于判断引用对象值是否相等，通常需要重写，默认的是比较对象的地址，String已经重写了
+2.final修饰的类、变量和实例变量不可改变。final修饰的类Field必须在静态初始化块中或声明该Field时指定初始值；实例Field必须在非静态初始化块、声明该Field或构造器中指定初始值。final变量必须初始化后才可以访问。final局部变量，只能初始化一次
+3.当final修饰基本类型变量，不能对基本类型变量重新赋值，但对于引用类型变量，只保证这个引用类型变量所引用的地址不会改变，即一直引用同意对象，但这个对象完全可以发生改变
+4.当类Field、实例Field或者局部变量使用了final修饰符，并且在定义该变量时指定了初始值，该初始值在编译时就被确定下来，那么就相当于是一个直接量（宏替换）
+
+228public class FinalLocalTest  
+229{  
+230    public static void main(String[] args)   
+231    {  
+232        //定义一个普通局部变量  
+233        final int a = 5;  
+234        System.out.println(a);  
+235    }  
+236}  
+变量a其实并不存在，执行System.out.println(a)时转换为System.out.println(5)
+5.final修饰的方法不可被重写（不希望子类重写父类的某个方法），final修饰的类不能有子类
+6.创建不可变类的规则（类似与String，Double）：使用private和final修饰符来修饰该类的Field；提供带参数构造器，用于根据传入参数来初始化类里的Field；仅为该类的Field提供Getter方法，不提供Setter方法；如果有必要，重写Object类的hashCode和equals方法，还要保证用equals判断相等的对象的hashCode也相等。
+
+237public class Address  
+238{  
+239    private final String detail;  
+240    private final String postCode;  
+241    //在构造器里初始化两个实例Field  
+242    public Address()  
+243    {  
+244        this.detail = "";  
+245        this.postCode = "";  
+246    }  
+247    public Address(String detail , String postCode)  
+248    {  
+249        this.detail = detail;  
+250        this.postCode = postCode;  
+251    }  
+252    //仅为两个实例Field提供getter方法  
+253    public String getDetail()  
+254    {  
+255        return this.detail;  
+256    }  
+257    public String getPostCode()  
+258    {  
+259        return this.postCode;  
+260    }  
+261    //重写equals方法，判断两个对象是否相等。  
+262    public boolean equals(Object obj)  
+263    {  
+264        if (this == obj)  
+265        {  
+266            return true;  
+267        }  
+268        if(obj != null && obj.getClass() == Address.class)  
+269        {  
+270            Address ad = (Address)obj;  
+271            // 当detail和postCode相等时，可认为两个Address对象相等。  
+272            if (this.getDetail().equals(ad.getDetail())   
+273                && this.getPostCode().equals(ad.getPostCode()))  
+274            {  
+275                return true;  
+276            }  
+277        }  
+278        return false;  
+279    }  
+280    public int hashCode()  
+281    {  
+282        return detail.hashCode() + postCode.hashCode() * 31;  
+283    }  
+284}  
+7.通过引用新的实例对象，就可以避免不可变类的引用类型的Field域被修改
+285class Name  
+286{  
+287    private String firstName;  
+288    private String lastName;  
+289    public Name(){}  
+290    public Name(String firstName , String lastName)  
+291    {  
+292        this.firstName = firstName;  
+293        this.lastName = lastName;  
+294    }  
+295    public void setFirstName(String firstName)  
+296    {  
+297        this.firstName = firstName;  
+298    }  
+299    public String getFirstName()  
+300    {  
+301        return this.firstName;  
+302    }  
+303    public void setLastName(String lastName)  
+304    {  
+305        this.lastName = lastName;  
+306    }  
+307    public String getLastName()  
+308    {  
+309        return this.lastName;  
+310    }  
+311}  
+312public class Person  
+313{  
+314    private final Name name;  
+315    public Person(Name name)  
+316    {  
+317        this.name = name;  
+318    }  
+319    public Name getName()  
+320    {  
+321        return name;  
+322    }  
+323    public static void main(String[] args)  
+324    {  
+325        Name n = new Name("悟空", "孙");  
+326        Person p = new Person(n);  
+327        // Person对象的name的firstName值为"悟空"  
+328        System.out.println(p.getName().getFirstName());  
+329        // 改变Person对象name的firstName值  
+330        n.setFirstName("八戒");  
+331        // Person对象的name的firstName值被改为"八戒"  
+332        System.out.println(p.getName().getFirstName());  
+333    }  
+334}  
+修改代码为：
+
+335public class Person  
+336{  
+337    private final Name name;  
+338    public Person(Name name)  
+339    {  
+[java] view plaincopyprint?
+
+340<span style="white-space:pre">  </span> this.name =new Name(name.getFirstName()name.getLastName());  
+[java] view plaincopyprint?
+
+341    }  
+342    public Name getName()  
+343    {  
+344        return newName(name.getFirstName()name.getLastName());  
+345    }  
+346    public static void main(String[] args)  
+347    {  
+348        Name n = new Name("悟空", "孙");  
+349        Person p = new Person(n);  
+350        // Person对象的name的firstName值为"悟空"  
+351        System.out.println(p.getName().getFirstName());  
+352        // 改变Person对象name的firstName值  
+353        n.setFirstName("八戒");  
+354        // Person对象的name的firstName值被改为"八戒"  
+355        System.out.println(p.getName().getFirstName());  
+356    }  
+357}  
+8.含有抽象方法的类只能被定义成抽象类（直接定义一个抽象方法；继承了一个抽象父类没有完全实现父类包含的抽象方法，以及实现了一个接口，但没有完全实现接口包含的抽象方法），final和abstract不能同时使用，static不能和abstract同时使用
+9.接口中不能包含普通方法，接口中所有方法都是抽象方法。一个接口可以有多个直接父接口，但接口只能继承接口，不能继承类。接口里可以包含Field（只能是常量）、方法（只能是抽象实例方法）、内部类（包括内部接口、枚举）定义。接口中的成员（包括常量、方法、内部类和枚举）都是public访问权限，可以省略public，如果指定访问修饰则只能用public。接口中的Field会自动添加static 和 final修饰符，即自动添加public static final，而且接口中没有构造器和初始化块，必须在定义时指定默认值。接口里的方法总是public abstract来修饰。接口里定义的内部类、接口、枚举类默认都采用public static 两个修饰符
+10.一个类可以继承一个父类，实现多个接口
+11.内部类成员可以直接访问外部类的私有数据，因为内部类被当成其外部类成员，同一个类成员之间可以相互访问，但外部类不能访问内部类的实现细节
+12.内部类的文件形式，B是A的内部类，则会生成A.class和A$B.class
+13.外部类成员变量、内部类成员变量与内部类里方法的局部变量同名，则可通过使用this,外部类类名.this作为限定来区分。同过OutterClass.this.propName的形式访问外部类的实例Field，通过this.propName的形式访问非静态内部类的实例Field
+
+
+358public class DiscernVariable  
+359{  
+360    private String prop = "外部类的实例变量";  
+361    private class InClass  
+362    {  
+363        private String prop = "内部类的实例变量";  
+364        public void info()  
+365        {  
+366            String prop = "局部变量";  
+367            //通过 外部类类名.this.varName 访问外部类实例Field  
+368            System.out.println("外部类的Field值："   
+369                + DiscernVariable.this.prop);  
+370            //通过 this.varName 访问内部类实例的Field  
+371            System.out.println("内部类的Field值：" + this.prop);  
+372            //直接访问局部变量  
+373            System.out.println("局部变量的值：" + prop);  
+374        }  
+375    }  
+376    public void test()  
+377    {  
+378        InClass in = new InClass();  
+379        in.info();  
+380    }  
+381    public static void main(String[] args)   
+382    {  
+383        new DiscernVariable().test();  
+384    }  
+385}  
+14.内部类也满足静态关系，即静态成员不能访问非静态成员，不允许在非静态内部类里定义静态成员
+15.static修饰的内部类，属于外部类本身，称为静态内部类。外部类不能直接访问静态内部类的成员，但可以使用静态内部类的类名作为调用者来访问静态内部类的类成员，也可以使用静态内部类对象作为调用者来访问静态内部类的实例成员。
+
+386public class AccessStaticInnerClass  
+387{  
+388    static class StaticInnerClass  
+389    {  
+390        private static int prop1 = 5;  
+391        private int prop2 = 9;  
+392    }  
+393    public void accessInnerProp()  
+394    {  
+395        //System.out.println(prop1);  
+396        //上面代码出现错误，应改为如下形式：  
+397        //通过类名访问静态内部类的类成员  
+398        System.out.println(StaticInnerClass.prop1);  
+399        //System.out.println(prop2);  
+400        //上面代码出现错误，应改为如下形式：  
+401        //通过实例访问静态内部类的实例成员  
+402        System.out.println(new StaticInnerClass().prop2);  
+403    }  
+404}  
+16.接口中定义的内部类，默认使用public static 修饰
+17.在外部类以外使用非静态内部类：如果在外部类以外的地方访问内部类（包括静态和非静态），则内部类不能使用private访问控制权限，private修饰的内部类只能在外部类内部使用，对于使用其他访问控制符修饰的内部类，则能在访问控制符对应的访问权限内使用。
+
+405OuterClass.InnerClass varName //在外部类意外定义内部类变量  
+在外部类以外的地方创建非静态内部类实例
+
+406OuterInstance.new InnerConstructor();  
+
+407class Out  
+408{  
+409    //定义一个内部类，不使用访问控制符，  
+410    //即只有同一个包中其他类可访问该内部类  
+411    class In  
+412    {  
+413        public In(String msg)  
+414        {  
+415            System.out.println(msg);  
+416        }  
+417    }  
+418}  
+419public class CreateInnerInstance  
+420{  
+421    public static void main(String[] args)   
+422    {  
+423        Out.In in = new Out().new In("测试信息");  
+424        /* 
+425        上面代码可改为如下三行代码： 
+426        使用OutterClass.InnerClass的形式定义内部类变量 
+427        Out.In in; 
+428        创建外部类实例，非静态内部类实例将寄存在该实例中 
+429        Out out = new Out(); 
+430        通过外部类实例和new来调用内部类构造器创建非静态内部类实例 
+431        in = out.new In("测试信息"); 
+432        */  
+433    }  
+434}  
+非静态内部类构造器必须使用外部类对象来调用。18.在外部类以外使用静态内部类
+
+435class StaticOut  
+436{  
+437    //定义一个静态内部类，不使用访问控制符，  
+438    //即同一个包中其他类可访问该内部类  
+439    static class StaticIn  
+440    {  
+441        public StaticIn()  
+442        {  
+443            System.out.println("静态内部类的构造器");  
+444        }  
+445    }  
+446}  
+447public class CreateStaticInnerInstance  
+448{  
+449    public static void main(String[] args)   
+450    {  
+451        StaticOut.StaticIn in = new StaticOut.StaticIn();  
+452        /* 
+453        上面代码可改为如下两行代码： 
+454        使用OutterClass.InnerClass的形式定义内部类变量 
+455        StaticOut.StaticIn in; 
+456        通过new来调用内部类构造器创建静态内部类实例 
+457        in = new StaticOut.StaticIn(); 
+458        */  
+459    }  
+460}  
+静态内部类只需使用外部类即可调用构造器，而非静态内部类必须使用外部类对象来调用构造器
+使用静态内部类只要把外部类当成静态内部类的包空间即可。
+19.匿名内部类适合创建那种只使用一次的类，匿名内部类会立即创建一个该类的实例，匿名内部类必须继承一个父类，或（最多）实现一个接口。匿名内部类不能是抽象类（需要对象实例），匿名内部类不能定义构造器（无类名），可以定义实例初始化块
+
+461new 父类构造器(实参列表) | (实现接口)｛ 匿名内部类的类体｝  
+
+462interface Product  
+
+463{  
+464    public double getPrice();  
+465    public String getName();  
+466}  
+467public class AnonymousTest  
+468{  
+469    public void test(Product p)  
+470    {  
+471        System.out.println("购买了一个" + p.getName()   
+472            + "，花掉了" + p.getPrice());  
+473    }  
+474    public static void main(String[] args)   
+475    {  
+476        AnonymousTest ta = new AnonymousTest();  
+477        //调用test方法时，需要传入一个Product参数，  
+478        //此处传入其匿名实现类的实例  
+479        ta.test(new Product()  
+480        {  
+481            public double getPrice()  
+482            {  
+483                return 567.8;  
+484            }  
+485            public String getName()  
+486            {  
+487                return "AGP显卡";  
+488            }  
+489        });  
+490    }  
+491}  
+20.通过接口创建匿名内部类时，不能显示创建构造器，只有一个隐式的无参构造器，new 接口名后的括号里不能传入参数值；通过继承父类来创建匿名内部类时，匿名内部类自动拥有和父类相似（相同的形参列表）的构造器。
+
+492abstract class Device  
+493{  
+494    private String name;  
+495    public abstract double getPrice();  
+496    public Device(){}  
+497    public Device(String name)  
+498    {  
+499        this.name = name;  
+500    }  
+501    //此处省略了name的setter和getter方法  
+502    public void setName(String name)  
+503    {  
+504        this.name = name;  
+505    }  
+506    public String getName()  
+507    {  
+508        return this.name;  
+509    }  
+510}  
+511public class AnonymousInner  
+512{  
+513    public void test(Device d)  
+514    {  
+515    System.out.println("购买了一个" + d.getName()  
+516        + "，花掉了" + d.getPrice());  
+517    }  
+518    public static void main(String[] args)   
+519    {  
+520        AnonymousInner ai = new AnonymousInner();  
+521        //调用有参数的构造器创建Device匿名实现类的对象  
+522        ai.test(new Device("电子示波器")  
+523        {  
+524            public double getPrice()  
+525            {  
+526                return 67.8;  
+527            }  
+528        });  
+529        //调用无参数的构造器创建Device匿名实现类的对象  
+530        Device d = new Device()  
+531        {  
+532            //初始化块  
+533            {  
+534                System.out.println("匿名内部类的初始化块...");  
+535            }  
+536            //实现抽象方法  
+537            public double getPrice()  
+538            {  
+539                return 56.2;  
+540            }  
+541            //重写父类的实例方法  
+542            public String getName()  
+543            {  
+544                return "键盘";  
+545            }  
+546        };  
+547        ai.test(d);  
+548    }  
+549}  
+21.匿名内部类内部只能访问外部类的final变量22.回调就是某一个方法一旦获得了内部类对象的引用后，就可以在合适的时候反过来去调用外部类实例的方法。所谓回调，就是允许客户类通过内部类引用来调用其外部类的方法
+
+550public class TeachableProgrammer extends Programmer  
+551{  
+552    public TeachableProgrammer(){}  
+553    public TeachableProgrammer(String name)  
+554    {  
+555        super(name);  
+556    }  
+557    //教学工作依然由TeachableProgrammer类定义  
+558    private void teach()  
+559    {  
+560        System.out.println(getName() + "教师在讲台上讲解...");  
+561    }  
+562    private class Closure implements Teachable  
+563    {  
+564        /* 
+565        非静态内部类回调外部类实现work方法，非静态内部类引用的作用仅仅是 
+566        向客户类提供一个回调外部类的途径 
+567        */  
+568        public void work()  
+569        {  
+570            teach();  
+571        }  
+572    }  
+573    //返回一个非静态内部类引用，允许外部类通过该非静态内部类引用来回调外部类的方法  
+574    public Teachable getCallbackReference()  
+575    {  
+576        return new Closure();  
+577    }  
+578}  
+
+579public class TeachableProgrammerTest  
+580{  
+581    public static void main(String[] args)   
+582    {  
+583        TeachableProgrammer tp = new TeachableProgrammer("李刚");  
+584        //直接调用TeachableProgrammer类从Programmer类继承到的work方法  
+585        tp.work();  
+586        //表面上调用的是Closure的work方法，  
+587        //实际上是回调TeachableProgrammer的teach方法  
+588        tp.getCallbackReference().work();  
+589    }  
+590}  
+23.用enum定义枚举类，默认继承了Enum类，Enum类实现了Serializable和Comparable两个接口。使用enum定义、非抽象的枚举类默认会使用final修饰，构造器只能使用private访问控制符；枚举类的所有实例必须在枚举类第一行显示列出，系统自动添加public static final修饰；枚举类提供了一个values方法。
+
+591public enum SeasonEnum  
+592{  
+593    // 在第一行列出4个枚举实例  
+594    SPRING,SUMMER,FALL,WINTER;  
+595}  
+[java] view plaincopyprint?
+
+596public class EnumTest  
+597{  
+598    public void judge(SeasonEnum s)  
+599    {  
+600        //switch语句里的表达式可以是枚举值  
+601        switch (s)  
+602        {  
+603            case SPRING:  
+604                System.out.println("春暖花开，正好踏青");  
+605                break;  
+606            case SUMMER:  
+607                System.out.println("夏日炎炎，适合游泳");  
+608                break;  
+609            case FALL:  
+610                System.out.println("秋高气爽，进补及时");  
+611                break;  
+612            case WINTER:  
+613                System.out.println("冬日雪飘，围炉赏雪");  
+614                break;  
+615        }  
+616    }  
+617    public static void main(String[] args)  
+618    {  
+619        //所有枚举类都有一个values方法，返回该枚举类的所有实例  
+620        for (SeasonEnum s : SeasonEnum.values())  
+621        {  
+622            System.out.println(s);  
+623        }  
+624        //平常使用枚举实例时，  
+625        //总是通过EnumClass.variable形式来访问  
+626        new EnumTest().judge(SeasonEnum.SPRING);  
+627    }  
+628}  
+23.枚举类的实例只能是枚举值，而不是随意通过new来创建枚举对象。每一个实例拥有一套定义的Field
+better
+
+629public enum Gender   
+630{  
+631    MALE,FEMALE;  
+632    private String name;  
+633    public void setName(String name)  
+634    {  
+635        switch (this)  
+636        {  
+637            case MALE:  
+638                if (name.equals("男"))  
+639                {  
+640                    this.name = name;  
+641                }  
+642                else  
+643                {  
+644                    System.out.println("参数错误");  
+645                    return;  
+646                }  
+647                break;  
+648            case FEMALE:  
+649            if (name.equals("女"))  
+650            {  
+651                this.name = name;  
+652            }  
+653            else  
+654            {  
+655                System.out.println("参数错误");  
+656                return;  
+657            }  
+658            break;  
+659        }  
+660    }  
+661    public String getName()  
+662    {  
+663        return this.name;  
+664    }  
+665}  
+
+666public class GenderTest  
+667{  
+668    public static void main(String[] args)   
+669    {  
+670        Gender g = Enum.valueOf(Gender.class , "FEMALE");  
+671        g.setName("女");  
+672        System.out.println(g + "代表:" + g.getName());  
+673        //此时设置name值时将会提示参数错误。  
+674        g.setName("男");  
+675        System.out.println(g + "代表:" + g.getName());  
+676    }  
+677}  
+best
+
+678public enum Gender  
+679{  
+680    //此处的枚举值必须调用对应构造器来创建  
+681    MALE("男"),FEMALE("女");  
+682    private final String name;  
+683    //枚举类的构造器只能使用private修饰  
+684    private Gender(String name)  
+685    {  
+686        this.name = name;  
+687    }  
+688    public String getName()  
+689    {  
+690        return this.name;  
+691    }  
+692}  
+24.枚举类实现接口与普通类一样。这样每个实例都有同样的方法。如果要实现实例方法的差异化，需要让每个枚举值分别来实现该方法[java] view plaincopyprint?
+
+693public interface GenderDesc  
+694{  
+695    void info();  
+696}  
+
+697public enum Gender implements GenderDesc  
+698{  
+699  
+700    //此处的枚举值必须调用对应构造器来创建  
+701    MALE("男")  
+702    //花括号部分实际上是一个类体部分  
+703    {  
+704        public void info()  
+705        {  
+706            System.out.println("这个枚举值代表男性");  
+707        }  
+708    },  
+709    FEMALE("女")  
+710    {  
+711        public void info()  
+712        {  
+713            System.out.println("这个枚举值代表女性");  
+714        }  
+715    };  
+716    //其他部分与codes\06\6.8\best\Gender.java中的Gender类完全相同  
+717}  
+匿名内部类的原理，创建的是Gender的子类实例
+25.在枚举类里定义抽象方法，为不同枚举值提供不同实现，也是匿名内部类的原理
+
+718public enum Operation2  
+719{  
+720    PLUS  
+721    {  
+722        public double eval(double x , double y)  
+723        {  
+724            return x + y;  
+725        }  
+726    },  
+727    MINUS  
+728    {  
+729        public double eval(double x , double y)  
+730        {  
+731            return x - y;  
+732        }  
+733    },  
+734    TIMES  
+735    {  
+736        public double eval(double x , double y)  
+737        {  
+738            return x * y;  
+739        }  
+740    },  
+741    DIVIDE  
+742    {  
+743        public double eval(double x , double y)  
+744        {  
+745            return x / y;  
+746        }  
+747    };  
+748    //为枚举类定义一个抽象方法，  
+749    //这个抽象方法由不同枚举值提供不同的实现  
+750    public abstract double eval(double x, double y);  
+751    public static void main(String[] args)  
+752    {  
+753        System.out.println(Operation2.PLUS.eval(3, 4));  
+754        System.out.println(Operation2.MINUS.eval(5, 4));  
+755        System.out.println(Operation2.TIMES.eval(5, 4));  
+756        System.out.println(Operation2.DIVIDE.eval(5, 4));  
+757    }  
+758}  
