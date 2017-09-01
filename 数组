@@ -1,0 +1,46 @@
+1.数组是一种数据类型，它本身市一中引用类型。 int[]就是一种类型。
+2.java数组定义格式  type[] arrayName 和 type arrayName[]; 推荐第一种。这样只定义了一个引用变量，没有分配内存空间。
+3.初始化：
+    a.静态初始化arrayName= new type[] {element1,element2...},type与element类型相同。也可以arrayName = {element1, element2...}
+    b.动态初始化arrayName= new type[length]
+4.foreach用于遍历数组和集合,for (type variableName : array | collection) { .................},只提供访问，不提供修改，即修改无效。
+5.基本数据类型数组直接在数组引用的内存存储值，而引用类型数组数组元素是引用，需要再次申请堆内存。
+6.二维数组的初始化
+
+25public class TwoDimensionTest  
+26{  
+27    public static void main(String[] args)   
+28    {  
+29        //定义一个二维数组  
+30        int[][] a;  
+31        //把a当成一维数组进行初始化，初始化a是一个长度为4的数组  
+32        //a数组的数组元素又是引用类型  
+33        a = new int[4][];  
+34        //把a数组当成一维数组，遍历a数组的每个数组元素  
+35        for (int i = 0 , len = a.length; i < len ; i++ )  
+36        {  
+37            System.out.println(a[i]);  
+38        }  
+39        //初始化a数组的第一个元素  
+40        a[0] = new int[2];  
+41        //访问a数组的第一个元素所指数组的第二个元素  
+42        a[0][1] = 6;  
+43        //a数组的第一个元素是一个一维数组，遍历这个一维数组  
+44        for (int i = 0 , len = a[0].length ; i < len ; i ++ )  
+45        {  
+46            System.out.println(a[0][i]);  
+47        }  
+48  
+49        //同时初始化二维数组的2个维数  
+50        int[][] b = new int[3][4];  
+51  
+52        //使用静态初始化的语法来初始化一个二维数组  
+53        String[][] str1 = new String[][]{new String[3]   
+54            , new String[]{"hello"}};  
+55        //使用简化的静态初始化语法来初始化二维数组  
+56        String[][] str2 = {new String[3]   
+57            , new String[]{"hello"}};  
+58        System.out.println(str1[1][0]);  
+59        System.out.println(str2[1][0]);  
+60    }  
+61}  
