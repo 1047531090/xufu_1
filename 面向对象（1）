@@ -1,0 +1,212 @@
+1.一个类中常见的三种成员：构造器、Field和方法
+2.static修饰的成员不能访问没有static修饰的成员
+3.方法传递参数凡是只有一种：值传递。
+4.形参个数可变的方法,在最后一个形参的类型后增加三点...，表示该形参可以接受多个参数值，多个参数的值被当成数组传入。
+[java] view plaincopyprint?
+
+62public class Varargs  
+63{  
+64    //定义了形参个数可变的方法  
+65    public static void test(int a , String... books)  
+66    {  
+67        //books被当成数组处理  
+68        for (String tmp : books)  
+69        {  
+70            System.out.println(tmp);  
+71        }  
+72        //输出整数变量a的值  
+73        System.out.println(a);  
+74    }  
+75    public static void main(String[] args)   
+76    {  
+77        //调用test方法  
+78        test(5 , "疯狂Java讲义" , "轻量级Java EE企业应用实战");  
+79    }  
+80}  
+5.重载：同一个类中包含了两个或两个以上方法的方法名相同，但是形参列表不同。方法返回值类型、修饰符等，与方法重载没有任何关系。可变参数方法重载时，优先选择不可变参数的方法。
+6.虽然类实例可以访问static Field，但是建议用类.StaticField来访问。
+7.访问控制权限。
+
+8.希望子类重写的方法，可以用protected修饰符
+9.父包中要使用子包中的类需要写成完整包路径加类名，使用import后可以直接使用类名。
+10.Java默认为所有源文件导入java.lang包下的所有类。
+11.import static 可以导入类的static Field
+[java] view plaincopyprint?
+
+81import static java.lang.System.*;  
+82import static java.lang.Math.*;  
+83  
+84public class StaticImportTest  
+85{  
+86    public static void main(String[] args)   
+87    {  
+88        //out是java.lang.System类的静态Field，代表标准输出  
+89        //PI是java.lang.Math类的静态Field，表示π常量  
+90        out.println(PI);  
+91        //直接调用Math类的sqrt静态方法  
+92        out.println(sqrt(256));  
+93    }  
+94}  
+12.一旦提供了构造器，则不再使用默认的构造器，通常在提供构造器后要提供一个无参构造器13.几个构造器中与重叠代码时，可以用一个构造器通过this（x,y)调用另一个构造器
+[java] view plaincopyprint?
+
+95public class Apple  
+96{  
+97    public String name;  
+98    public String color;  
+99    public double weight;  
+100    public Apple()  
+101    {  
+102    }  
+103    //两个参数的构造器  
+104    public Apple(String name , String color)  
+105    {  
+106        this.name = name;  
+107        this.color = color;  
+108    }  
+109    //三个参数的构造器  
+110    public Apple(String name , String color , double weight)  
+111    {  
+112        //通过this调用另一个重载的构造器的初始化代码  
+113        this(name , color);  
+114        //下面this引用该构造器正在初始化的Java对象  
+115        this.weight = weight;  
+116    }  
+117}  
+14.子类包含与父类同名方法的现象被称为方法重写，重写要遵循“两同两小一大”规则，“两同”即方法名相同、形参列表相同；“两小”指的是子类方法返回值类型应比父类方法返回值类型更小或者相等，子类方法声明抛出的异常类应比父类方法声明抛出的异常类更小或相等；"一大“，子类方法的访问权限应比父类方法更大或者相等
+15.父类中的private方法对子类是隐藏的，因此其子类无法访问该方法，也就是无法重写该方法，即使子类中有相同的private方法，也不是重写
+16.子类Field定义了与父类Field同名成员变量，那么子类成员变量会覆盖父类成员变量，但是子类对象初始化时也会为父类成员变量分配存储空间，必须通过super访问
+17.子类构造器总会调用一次父类构造器，如果没有显示调用父类构造器，则调用默认的父类构造器，super显示调用父类构造器，必须放在子类构造器的第一行
+18.创建任何java对象总是先调用object类的构造器，自顶向下调用构造器
+19.Java引用变量有编译时类型和运行时类型两类，编译时类型由定义该变量时使用的类型决定，运行时类型由实际赋给该变量的对象决定。编译时类型和运行时类型不一致，就可能出现所谓的多态性
+20.对象的Field并不具有多态性，总是访问它编译时类型所定义的Field，而不是它运行时类型所定义的Field
+21.将父类引用强制转换成子类引用时，需要先用instanceof进行预判
+22.设计父类的原则：a.尽量隐藏父类的内部数据，多用private，不让子类直接访问父类；b.不要让子类可以随意访问、修改父类的方法，辅助方法用private，不希望改写用final，希望重写，不希望其他类访问，可以用protected。c.尽量不要在构造器中调用将要被子类重写的方法。
+[java] view plaincopyprint?
+
+118class Base  
+119{  
+120    public Base()  
+121    {  
+122        test();  
+123    }  
+124    public void test()           //①号test方法  
+125    {  
+126        System.out.println("将被子类重写的方法");  
+127    }  
+128}  
+129public class Sub extends Base  
+130{  
+131    private String name;  
+132    public void test()        //②号test方法  
+133    {  
+134        System.out.println("子类重写父类的方法，"  
+135            + "其name字符串长度" + name.length());  
+136    }  
+137    public static void main(String[] args)  
+138    {  
+139        //下面代码会引发空指针异常  
+140        Sub s = new Sub();  
+141    }  
+142}  
+当创建Sub对象时，先执行父类构造器，父类构造器调用了被子类重写方法，则变成调用被子类重写后的方法。即执行2号test方法，此时name Field是null
+23.使用final或者将构造器设置为private，则该类无法成为父类，对于后者可以提供静态方法以创建该类的实例
+24.当子类需要增加额外属性或者行为方式时，就使用继承
+25.初始化块是Java类的第四种成员（Field、方法和构造器），先定义的初始化块先执行，后定义的后执行，用｛｝表示，初始化块在构造器之前执行
+26.创建Java对象时，先为该对象的所有实例Field分配内存（前提是该类已经被加载过）接着成语开始对这些实例变量执行初始化，先执行初始化块或者声明Field时指定的初始值，在执行构造器里指定的初始值。
+[java] view plaincopyprint?
+
+143public class InstanceInitTest  
+144{  
+145    //为a分配内存，再执行初始化块将a Field赋值为6  
+146    {  
+147        a = 6;  
+148    }  
+149    //再执行将a Field赋值为9  
+150    int a = 9;  
+151    public static void main(String[] args)   
+152    {  
+153        //下面代码将输出9。  
+154        System.out.println(new InstanceInitTest().a);  
+155    }  
+156}  
+27.将多个构造器中相同的代码提取到初始化块中定义，能更好地提高初始化代码的复用，提高整个应用的可维护性
+28.在存在继承关系中，先执行父类的初始化块，父类的构造器，再执行子类的初始化块和子类构造器
+29.静态初始化代码块使用static，系统将在类初始化阶段执行静态初始化块，而不是在创建对象时才执行，静态初始化块总是比普通初始化块先执行。通常用于对类Field执行初始化处理，而不能对实例Field进行初始化处理。不能访问非静态的Field。静态初始化块也要上溯父类。
+[java] view plaincopyprint?
+
+157class Root  
+158{  
+159    static{  
+160        System.out.println("Root的静态初始化块");  
+161    }  
+162    {  
+163        System.out.println("Root的普通初始化块");  
+164    }  
+165    public Root()  
+166    {  
+167        System.out.println("Root的无参数的构造器");  
+168    }  
+169}  
+170class Mid extends Root  
+171{  
+172    static{  
+173        System.out.println("Mid的静态初始化块");  
+174    }  
+175    {  
+176        System.out.println("Mid的普通初始化块");  
+177    }  
+178    public Mid()  
+179    {  
+180        System.out.println("Mid的无参数的构造器");  
+181    }  
+182    public Mid(String msg)  
+183    {  
+184        //通过this调用同一类中重载的构造器  
+185        this();  
+186        System.out.println("Mid的带参数构造器，其参数值："  
+187            + msg);  
+188    }  
+189}  
+190class Leaf extends Mid  
+191{  
+192    static{  
+193        System.out.println("Leaf的静态初始化块");  
+194    }  
+195    {  
+196        System.out.println("Leaf的普通初始化块");  
+197    }     
+198    public Leaf()  
+199    {  
+200        //通过super调用父类中有一个字符串参数的构造器  
+201        super("疯狂Java讲义");  
+202        System.out.println("执行Leaf的构造器");  
+203    }  
+204}  
+205public class Test  
+206{  
+207    public static void main(String[] args)   
+208    {  
+209        new Leaf();  
+210        new Leaf();  
+211    }  
+212}  
+30.当JVM第一次主动使用某个类时，系统为在类准备阶段为该类的所有静态Field分配内存；在初始化阶段则负责初始化这些静态Field，初始化静态Field就是执行类初始化代码或者声明类Field时指定的初始值，他们的执行顺去与源代码中的排列顺序相同。
+[java] view plaincopyprint?
+
+213public class StaticInitTest  
+214{  
+215    //先执行静态初始化块将a静态Field赋值为6  
+216    static  
+217    {  
+218        a = 6;  
+219    }  
+220    //再执行将a静态Field赋值为9  
+221    static int a = 9;  
+222    public static void main(String[] args)   
+223    {  
+224        //下面代码将输出9。  
+225        System.out.println(StaticInitTest.a);  
+226    }  
+227}  
+即先分配空间，再按排列顺序执行赋值。
