@@ -1,0 +1,171 @@
+1.File类与平台无关的用来操作文件和目录，不能访问文件本身的内容。提供了访问文件名、文件检测、获取常规文件信息、文件操作、目录操作
+2.FilenameFilter接口包含一个accept方法，该方法将依次对指定File的所有子目录或者文件进行迭代
+[java] view plaincopyprint?
+ 
+1 public class FilenameFilterTest  
+2 {  
+3     public static void main(String[] args)   
+4     {  
+5         File file = new File(".");  
+6         String[] nameList = file.list(new MyFilenameFilter());  
+7         for(String name : nameList)  
+8         {  
+9             System.out.println(name);  
+10         }  
+11     }  
+12 }  
+13 // 实现自己的FilenameFilter实现类  
+14 class MyFilenameFilter implements FilenameFilter  
+15 {  
+16     public boolean accept(File dir, String name)  
+17     {  
+18         // 如果文件名以.java结尾，或者文件对应一个路径，返回true  
+19         return name.endsWith(".java")  
+20             || new File(name).isDirectory();  
+21     }  
+22 }  
+3.Java的流主要包括字节流（InputStream、OutputStream）和字符流（Reader、Writer），他们都是抽象的基类。节点流是指与特定的IO设备发生读写数据的流，也称为低级流；处理流则用于对一个已存在的流进行连接或封装，通过封装后的流来实现读写功能，处理流也称为高级流。
+只要使用相同的处理流，程序就可以采用完全相同的输入输出代码访问不同的数据源，随着处理流所包装节点流的变化，程序实际所访问的数据源也相应地发生变化。处理流主要以增加缓冲的方式来提高输入输出的效率并且可能提供了一系列便捷的方法来一次输入输出大批量的内容，处理流可以嫁接在任何已存在的流的基础上
+5.Java输入输出流体系中常用的流分类
+
+6.InputStreamReader和OutputStreamWriter将字节流转换成字符流
+7.System.in代表标准输入，是InputStream类的实例，使用InputStreamReader将其转换成字符输入流，再次包装成BufferedReader
+[java] view plaincopyprint?
+
+public class KeyinTest
+{
+    public static void main(String[] args)
+    {
+        try(
+            // 将Sytem.in对象转换成Reader对象
+            InputStreamReader reader = new InputStreamReader(System.in);
+            //将普通Reader包装成BufferedReader
+            BufferedReader br = new BufferedReader(reader))
+        {
+            String buffer = null;
+            //采用循环方式来一行一行的读取
+            while ((buffer = br.readLine()) != null)
+            {
+                //如果读取的字符串为"exit"，程序退出
+                if (buffer.equals("exit"))
+                {
+                    System.exit(1);
+                }
+                //打印读取的内容
+                System.out.println("输入内容为:" + buffer);
+            }
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+    }
+8.推回输入流PushbackInputStream和PushbackReader，提供了unread方法，将字节、字符推回到缓冲区，从而允许重复读取。这两个推回输入流都带有一个推回缓冲区，读取也是先从推回缓冲区读取，完全读取了推回缓冲区的内容后，还没装满read所需的数组时才会从原输入流中读取。
+[java] view plaincopyprint?
+
+public class PushbackTest
+{
+    public static void main(String[] args)
+    {
+        try(
+            // 创建一个PushbackReader对象，指定推回缓冲区的长度为64
+            PushbackReader pr = new PushbackReader(new FileReader(
+                "PushbackTest.java") , 64))
+        {
+            char[] buf = new char[32];
+            // 用以保存上次读取的字符串内容
+            String lastContent = "";
+            int hasRead = 0;
+            // 循环读取文件内容
+            while ((hasRead = pr.read(buf)) > 0)
+            {
+                // 将读取的内容转换成字符串
+                String content = new String(buf , 0 , hasRead);
+                int targetIndex = 0;
+                // 将上次读取的字符串和本次读取的字符串拼起来，
+                // 查看是否包含目标字符串, 如果包含目标字符串
+                if ((targetIndex = (lastContent + content)
+                    .indexOf("new PushbackReader")) > 0)
+                {
+                    // 将本次内容和上次内容一起推回缓冲区
+                    pr.unread((lastContent + content).toCharArray());
+                    // 指定读取前面len个字符
+                    int len = targetIndex > 32 ? 32 : targetIndex;
+                    // 再次读取指定长度的内容（就是目标字符串之前的内容）
+                    pr.read(buf , 0 , len);
+                    // 打印读取的内容
+                    System.out.print(new String(buf , 0 ,len));
+                    System.exit(0);
+                }
+                else
+                {
+                    // 打印上次读取的内容
+                    System.out.print(lastContent);
+                    // 将本次内容设为上次读取的内容
+                    lastContent = content;
+                }
+            }
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+    }
+}
+9.重定向标准输入输出的方法：
+[java] view plaincopyprint?
+
+public void setErr(PringStream err):
+public void setIn(InputStream in):
+public void setOut(PrintStream out):
+[java] view plaincopyprint?
+
+public class RedirectOut
+{
+    public static void main(String[] args)
+    {
+        try(
+            // 一次性创建PrintStream输出流
+            PrintStream ps = new PrintStream(new FileOutputStream("out.txt")))
+        {
+            // 将标准输出重定向到ps输出流
+            System.setOut(ps);
+            // 向标准输出输出一个字符串
+            System.out.println("普通字符串");
+            // 向标准输出输出一个对象
+            System.out.println(new RedirectOut());
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+}
+[java] view plaincopyprint?
+
+public class RedirectIn
+{
+    public static void main(String[] args)
+    {
+        try(
+            FileInputStream fis = new FileInputStream("RedirectIn.java"))
+        {
+            // 将标准输入重定向到fis输入流
+            System.setIn(fis);
+            // 使用System.in创建Scanner对象，用于获取标准输入
+            Scanner sc = new Scanner(System.in);
+            // 增加下面一行将只把回车作为分隔符
+            sc.useDelimiter("\n");
+            // 判断是否还有下一个输入项
+            while(sc.hasNext())
+            {
+                // 输出输入项
+                System.out.println("键盘输入的内容是：" + sc.next());
+            }
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+}
