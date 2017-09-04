@@ -1,0 +1,27 @@
+ public static void JDomParse(){
+         String xmlpath = TEST.class.getResource("/simu/test.xml").getFile();
+         try {
+             xmlpath = URLDecoder.decode(xmlpath, "utf-8");
+         } catch (UnsupportedEncodingException e1) {
+             e1.printStackTrace();
+         }
+          SAXBuilder builder=new SAXBuilder(false);
+          try {
+          Document doc=builder.build(xmlpath);
+          Element books=doc.getRootElement();
+         List booklist=books.getChildren("book");
+          for (Iterator iter = booklist.iterator(); iter.hasNext();) {
+          Element book = (Element) iter.next();
+          String email=book.getAttributeValue("email");
+          System.out.println(email);
+          String name=book.getChildTextTrim("name");
+          System.out.println(name);
+          book.getChild("name").setText("alterrjzjh");
+          }
+          XMLOutputter outputter=new XMLOutputter();
+          outputter.output(doc,new FileOutputStream(xmlpath));
+          } catch (JDOMException e) {
+          e.printStackTrace();
+          } catch (IOException e) {
+         e.printStackTrace();
+          }          }
