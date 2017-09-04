@@ -1,0 +1,43 @@
+1.<?xml version="1.0" encoding="UTF-8"?>  
+2.<root>  
+3.    <student id="1" group="1">  
+4.        <name>张三</name>  
+5.        <sex>男</sex>  
+6.        <age>18</age>  
+7.        <email>zhangsan@163.com</email>  
+8.        <birthday>1987-06-08</birthday>  
+9.        <memo>好学生</memo>  
+10.    </student>  
+11.    <student id="2" group="2">  
+12.        <name>李四</name>  
+13.        <sex>女</sex>  
+14.        <age>18</age>  
+15.        <email>lisi@163.com</email>  
+16.        <birthday>1987-06-08</birthday>  
+17.        <memo>好学生</memo>  
+18.    </student>  
+19.    <student id="3" group="3">  
+20.        <name>小王</name>  
+21.        <sex>男</sex>  
+22.        <age>18</age>  
+23.        <email>xiaowang@163.com</email>  
+24.        <birthday>1987-06-08</birthday>  
+25.        <memo>好学生</memo>  
+26.    </student>  
+27.    <student id="4" group="4">  
+28.        <name>小张</name>  
+29.        <sex>男</sex>  
+30.        <age>18</age>  
+31.        <email>xiaozhang@163.com</email>  
+32.        <birthday>1987-06-08</birthday>  
+33.        <memo>好学生</memo>  
+34.    </student>  
+35.    <student id="5" group="5">  
+36.        <name>小明</name>  
+37.        <sex>男</sex>  
+38.        <age>18</age>  
+39.        <email>xiaoming@163.com</email>  
+40.        <birthday>1987-06-08</birthday>  
+41.        <memo>好学生</memo>  
+42.    </student>  
+43.</root>  
