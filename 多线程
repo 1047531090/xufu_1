@@ -1,0 +1,494 @@
+一、进程与线程的区别
+
+关于进程的特性
+独立性：进程是系统中独立存在的实体，它可以拥有自己独立的资源，每个进程都拥有自己私有的地址空间。在没有经过进程本身运行的情况下是不能访问其中的内容的。
+动态性：进程与程序的区别在于，程序是静态的，进程是动态的。程序只是一个静态的指令集合，而进程是一个正在系统中运行的指令集合。有了时间的概念，如生命周期；
+并发性：进程之间，交替着执行。
+线程，一个顺序执行流；
+它是进程的组成部分，一个进程可以有多个线程。
+
+
+二、Java的线程实现
+1.继承Thread类
+（class MyThread extends Thread{
+    String name = null;
+    int ticket = 0;
+    public MyThread(String name){
+        this.name = name;
+    }
+    public synchronized void run(){
+        for (int i = 0; i < 5; i++) {
+            System.out.println(Thread.currentThread().getName()+this.name+" ticket:"+ticket++);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }           
+        }
+   }
+}）  
+2.实现Runnable接口
+（class RunThread implements Runnable{
+      int Counter = 0;
+@Override
+     public synchronized void run() {
+         for(int i=0;i<5;i++){
+             System.out.println(Thread.currentThread().getName()+"count:"+Counter++);
+             try {
+                 Thread.sleep(100);
+             } catch (InterruptedException e) {
+                 // TODO Auto-generated catch block
+                 e.printStackTrace();
+             }            
+         }
+     }    
+ }）  
+3.两种实现方式的区别
+（一个是多个线程分别完成自己的任务，一个是多个线程共同完成一个任务。）
+
+三、线程的操作状态
+四、线程的操作方法
+1.取得当前的线程、设置和取得名字
+（public final String getName():获取线程的名称。
+public final void setName(String name):设置线程的名称）  
+2.判断线程的运行状态（线程计数器，使用Thread.join方法）  
+3.线程的强制执行  
+4.线程的休眠
+1.（class MyThead implements Runnable  
+2.{  
+3.    public void run()  
+4.    {  
+5.        System.out.println("我休息了！");  
+6.        try  
+7.        {  
+8.            Thread.sleep(1000);  
+9.        }  
+10.        catch (InterruptedException e)  
+11.        {  
+12.        }  
+13.        System.out.println("一秒后在叫我吧！");  
+14.    }  
+15.}  
+16.  
+17.public class TheadMain  
+18.{  
+19.    public static void main(String[] args)  
+20.    {  
+21.        MyThead myThead = new MyThead();  
+22.        Thread thread = new Thread(myThead);  
+23.        thread.start();  
+24.    }  
+25.}  ）  
+5.线程的中断
+1.（boolean interrupted = false;  
+2.try {  
+3.    while (true) {  
+4.        try {  
+5.            return blockingQueue.take();  
+6.        } catch (InterruptedException e) {  
+7.            interrupted = true;  
+8.        }  
+9.    }  
+10.} finally {  
+11.    if (interrupted){  
+12.        Thread.currentThread().interrupt();  
+13.    }  
+14.}  
+）   
+6.线程的优先级
+（public class Test { 
+        public static void main(String[] args) { 
+                Thread t1 = new MyThread1(); 
+                Thread t2 = new Thread(new MyRunnable()); 
+                t1.setPriority(10); 
+                t2.setPriority(1); 
+
+                t2.start(); 
+                t1.start(); 
+        } 
+} 
+
+class MyThread1 extends Thread { 
+        public void run() { 
+                for (int i = 0; i < 10; i++) { 
+                        System.out.println("线程1第" + i + "次执行！"); 
+                        try { 
+                                Thread.sleep(100); 
+                        } catch (InterruptedException e) { 
+                                e.printStackTrace(); 
+                        } 
+                } 
+        } 
+} 
+
+class MyRunnable implements Runnable { 
+        public void run() { 
+                for (int i = 0; i < 10; i++) { 
+                        System.out.println("线程2第" + i + "次执行！"); 
+                        try { 
+                                Thread.sleep(100); 
+                        } catch (InterruptedException e) { 
+                                e.printStackTrace(); 
+                        } 
+                } 
+        } 
+}）
+五、线程的同步与死锁（理解）
+（所谓死锁: 是指两个或两个以上的进程在执行过程中，因争夺资源而造成的一种互相等待的现象，若无外力作用，它们都将无法推进下去。那么为什么会产生死锁呢？
+1.因为系统资源不足。
+2.进程运行推进的顺序不合适。   
+ 3.资源分配不当。            
+ 学过操作系统的朋友都知道：产生死锁的条件有四个：
+1.互斥条件：所谓互斥就是进程在某一时间内独占资源。
+2.请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。
+3.不剥夺条件:进程已获得资源，在末使用完之前，不能强行剥夺。
+4.循环等待条件:若干进程之间形成一种头尾相接的循环等待资源关系。
+）
+六、线程的经典操作案例 生产者-消费者
+1.（public class ProducerConsumer {  
+2.    public static void main(String[] args) {  
+3.        //建立一个存储区  
+4.        ProductStack ss = new ProductStack();  
+5.        //添加生产者  
+6.        Producer p1 = new Producer(ss);  
+7.        p1.setName("NO.1P");  
+8.        Producer p2 = new Producer(ss);  
+9.        p2.setName("NO.2P");  
+10.        Producer p3 = new Producer(ss);  
+11.        p3.setName("NO.3P");  
+12.        Producer p4 = new Producer(ss);  
+13.        p4.setName("NO.4P");  
+14.        Producer p5 = new Producer(ss);  
+15.        p5.setName("NO.5P");  
+16.        //添加消费者  
+17.        Consumer c1 = new Consumer(ss);  
+18.        c1.setName("NO.1C");  
+19.        Consumer c2 = new Consumer(ss);  
+20.        c2.setName("NO.3C");  
+21.        Consumer c3 = new Consumer(ss);  
+22.        c3.setName("NO.3C");  
+23.        Consumer c4 = new Consumer(ss);  
+24.        c4.setName("NO.4C");  
+25.        Consumer c5 = new Consumer(ss);  
+26.        c5.setName("NO.5C");  
+27.          
+28.        //打开存储区  
+29.        ss.openStack();  
+30.          
+31.        //各角色开始进行生产或消费活动  
+32.        p1.start();  
+33.        p2.start();       
+34.        p3.start();       
+35.        c1.start();  
+36.        c2.start();  
+37.          
+38.        //活动100ms后停止  
+39.        try {  
+40.            Thread.sleep(100);  
+41.            ss.closeStack();  
+42.        } catch (InterruptedException e) {  
+43.            e.printStackTrace();  
+44.        }  
+45.          
+46.          
+47.        //1秒后重新开始活动  
+48.        try {  
+49.            Thread.sleep(1000);  
+50.            ss.openStack();  
+51.        } catch (InterruptedException e) {  
+52.            e.printStackTrace();  
+53.        }  
+54.          
+55.        p4.start();       
+56.        p5.start();       
+57.        c3.start();  
+58.        c4.start();  
+59.        c5.start();  
+60.          
+61.        //活动100ms后再次停止  
+62.        try {  
+63.            Thread.sleep(100);  
+64.            ss.closeStack();  
+65.        } catch (InterruptedException e) {  
+66.            e.printStackTrace();  
+67.        }  
+68.          
+69.    }  
+70.}  
+71.  
+72.  
+73./** 
+74. * 产品 
+75. * @author Administrator 
+76. * 
+77. */  
+78.class Product {  
+79.    //已生产的产品总数  
+80.    private static Integer totalProduct = 0;  
+81.    //产品id（生产日期+生产总数）  
+82.    private String id = null;  
+83.  
+84.    public Product() {  
+85.        this.id = generateId();  
+86.    }  
+87.      
+88.    private String generateId(){  
+89.        //类锁  由于所有线程的Product对象不同，故只能用类锁使任何使用该类对象的线程在此处进行同步  
+90.        synchronized(Product.class){  
+91.            ++totalProduct;  
+92.//          String genId = new Timestamp(System.currentTimeMillis()).toString().replaceAll(  
+93.//                  "[-,:, ,.]", "")  
+94.//                  + "-" + totalProduct;   
+95.            return String.valueOf(totalProduct);  
+96.//          return genId;  
+97.        }  
+98.    }  
+99.  
+100.    public String getId() {  
+101.        return id;  
+102.    }  
+103.  
+104.}  
+105.  
+106./** 
+107. * 产品存储区  所有生产者和消费者共享 
+108. * @author Administrator 
+109. * 
+110. */  
+111.class ProductStack {  
+112.      
+113.    //标志存储区是否打开  
+114.    private boolean StackOpen = false;  
+115.    //存储区能容纳的最大产品数  
+116.    private int capacity = 10;  
+117.    //当前的产品数  
+118.    private int Current = 0;  
+119.    //存放产品的容器  
+120.    private Product[] ProductArray = new Product[capacity];  
+121.    //存储区关闭后使用的外部（备用）存储区  
+122.    private Stack<Product> externalStack = new Stack<Product>();  
+123.      
+124.    /** 
+125.     * 默认构造方法 
+126.     */  
+127.    public ProductStack(){  
+128.    }  
+129.      
+130.    /** 
+131.     * 构造方法 
+132.     * @param capacity 存储区容量 
+133.     */  
+134.    public ProductStack(int capacity){  
+135.        ProductArray = new Product[capacity];  
+136.    }  
+137.      
+138.    /** 
+139.     *  存储产品 
+140.     * @param pt 传入生产出的产品 
+141.     */  
+142.    /* 
+143.     * 对象锁，相当于方法中加synchronized(this){方法体} 
+144.     * 所有继承object的类都有一个锁标记（lock flag），当多个线程对同一个对象进行访问时， 
+145.     * 如果遇到同步代码块，会先检查锁标记是否已经打开：如果已打开，线程就被放到锁池中等待， 
+146.     * 等其他同步代码块释放了锁标记后才继续执行；如果未打开，则为对象添加一个锁标记，然后再执行。 
+147.     */  
+148.    public synchronized void push(Product pt) {  
+149.        while (StackOpen && Current == ProductArray.length) {  
+150.            try {  
+151.                /* 
+152.                 * 线程释放锁标记，被放入等待池， 当同一对象中的其他同步代码块调用 
+153.                 * notify/notifyAll时，线程被放到锁池中，等其他同步代码块释放锁标记后执行。 
+154.                 */  
+155.                this.wait();  
+156.            } catch (InterruptedException e) {  
+157.                e.printStackTrace();  
+158.            }  
+159.        }  
+160.        if(!StackOpen){  
+161.            externalStack.push(pt);  
+162.            System.out.println("由于存储区已关闭 ，第" + pt.getId() + "号导出至外部存储区！");  
+163.            return;  
+164.        }  
+165.        ProductArray[Current] = pt;  
+166.        String threadName = Thread.currentThread().getName();  
+167.        if(threadName.equals("externalStackImportThread")){  
+168.            System.out.println("第" + pt.getId() + "号已从外部存储区导入！");  
+169.        }else{  
+170.            System.out.println(threadName + "生产的：第" + pt.getId() + "号已入库！");  
+171.        }  
+172.        ++Current;  
+173.        /* 释放本对象等待池中的所有线程，进入锁池，等push释放锁标记后，共同竞争以进入running状态 
+174.         * 此时，存储区至少有一个产品，所以通知在pop中等待的线程，等push结束后，可以相互竞争以继续执行 
+175.         */  
+176.        this.notifyAll();  
+177.    }  
+178.      
+179.    /** 
+180.     *  取出产品 
+181.     * @return 返回从库中取出的产品 
+182.     */  
+183.  
+184.    public synchronized Product pop() {  
+185.        while (StackOpen && Current == 0) {  
+186.            try {  
+187.                this.wait();  
+188.            } catch (InterruptedException e) {  
+189.                e.printStackTrace();  
+190.            }  
+191.        }  
+192.        if(!StackOpen){  
+193.            return null;  
+194.        }  
+195.        --Current;  
+196.        //此时，存储区至少还有一个产品可存储，所以通知在push中等待的线程，等pop结束后，可以相互竞争以继续执行  
+197.        this.notifyAll();  
+198.        Product pt = ProductArray[Current];  
+199.        System.out.println("----------" + Thread.currentThread().getName() + "消费的：第" + pt.getId() + "号已出库！");  
+200.        return pt;  
+201.    }  
+202.      
+203.    /** 
+204.     * 打开存储区 
+205.     */  
+206.    public void openStack(){  
+207.        System.out.println("-----------------------存储区已打开！现有产品数: " + getCurrent()  + "-----------------------");  
+208.        StackOpen = true;  
+209.        //导入外部存储区中的产品  
+210.        if(!externalStack.isEmpty()){  
+211.            ImportExternalStack();  
+212.        }  
+213.    }  
+214.      
+215.    /** 
+216.     * 导入外部存储区 
+217.     */  
+218.    private void ImportExternalStack(){  
+219.        //使用Runnable匿名类建立一个导入线程  
+220.        Thread thread = new Thread(new Runnable(){  
+221.            @Override  
+222.            public void run() {  
+223.                // TODO Auto-generated method stub  
+224.                while(!externalStack.isEmpty()){  
+225.                    Product pt = externalStack.pop();  
+226.                    push(pt);  
+227.                }  
+228.            }  
+229.        });  
+230.        thread.setName("externalStackImportThread");  
+231.        thread.start();  
+232.    }  
+233.      
+234.    /** 
+235.     * 关闭存储区 
+236.     */  
+237.    public synchronized void closeStack(){        
+238.        StackOpen = false;  
+239.        //通知所有正在等待的线程“查看”当前库状态  
+240.        this.notifyAll();  
+241.        System.out.println("-----------------------存储区已关闭！现有产品数: " + getCurrent()  + "-----------------------");  
+242.    }  
+243.      
+244.    /** 
+245.     * 查询存储区是否打开 
+246.     * @return 
+247.     */  
+248.    public boolean isStackOpen() {  
+249.        return StackOpen;  
+250.    }  
+251.      
+252.    /** 
+253.     * 查询存储区产品的最大存储数量 
+254.     * @return  
+255.     */  
+256.    public int getMaxProduct() {  
+257.        return capacity;  
+258.    }  
+259.      
+260.    /** 
+261.     * 获得当前产品数量 
+262.     * @return 
+263.     */  
+264.    public int getCurrent() {  
+265.        return Current;  
+266.    }  
+267.      
+268.    /** 
+269.     * 获得外部存储区产品数量 
+270.     * @return 
+271.     */  
+272.    public int getExternalStackCount() {  
+273.        return externalStack.size();  
+274.    }  
+275.  
+276.}  
+277.  
+278./** 
+279. * 生产者 
+280. * @author Administrator 
+281. * 
+282. */  
+283.class Producer extends Thread{  
+284.    ProductStack ss;  
+285.  
+286.    public Producer(ProductStack ss) {  
+287.        this.ss = ss;  
+288.    }  
+289.      
+290.    /** 
+291.     * 生产产品 
+292.     */  
+293.    public void run() {  
+294.        while (ss.isStackOpen()) {  
+295.            try {  
+296.                Thread.sleep(10);  
+297.            } catch (InterruptedException e) {  
+298.                e.printStackTrace();  
+299.            }  
+300.            Product pt = new Product();  
+301.            System.out.println(Thread.currentThread().getName() + "生产了：第"  
+302.                    + pt.getId() + "号");  
+303.            ss.push(pt);  
+304.        }  
+305.        System.out.println(Thread.currentThread().getName() +"已停止生产!");  
+306.    }  
+307.}  
+308.  
+309./** 
+310. * 消费者 
+311. * @author Administrator 
+312. * 
+313. */  
+314.  
+315.class Consumer extends Thread{  
+316.    ProductStack ss;  
+317.  
+318.    public Consumer(ProductStack ss) {  
+319.        this.ss = ss;  
+320.    }  
+321.  
+322.    /** 
+323.     * 消费产品 
+324.     */  
+325.    public void run() {  
+326.        while (ss.isStackOpen()) {  
+327.            try {  
+328.                Thread.sleep(10);  
+329.            } catch (InterruptedException e) {  
+330.                e.printStackTrace();  
+331.            }  
+332.            Product pt = ss.pop();  
+333.            if(pt != null){  
+334.                System.out.println("----------" + Thread.currentThread().getName() + "消费了：第"  
+335.                        + pt.getId() + "号");;  
+336.            }  
+337.        }  
+338.        System.out.println(Thread.currentThread().getName() + "已停止消费");  
+339.    }  
+340.}  
+）
+七、线程的生命周期
+（
+
+
+
