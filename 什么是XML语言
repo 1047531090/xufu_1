@@ -1,0 +1,23 @@
+XML是EXtensible Markup Language的缩写
+
+XML是一种类似于HTML的标记语言
+
+XML是用来描述数据的
+
+XML的标记不是在XML中预定义的，你必须定义自己的标记
+
+XML使用文档类型定义(DTD)或者模式(Schema)来描述数据
+
+XML使用DTD或者Schema后就是自描述的语言
+
+XML和HTML的主要区别是什么
+
+XML是用来存放数据的
+
+XML不是HTML的替代品，XML和HTML是两种不同用途的语言。
+
+XML是被设计用来描述数据的，重点是:什么是数据，如何存放数据。
+
+HTML是被设计用来显示数据的，重点是:显示数据以及如何显示数据更好上面。
+
+HTML是与显示信息相关的, XML则是与描述信息相关的。
