@@ -1,0 +1,89 @@
+1.Introspector类
+1.(package com.javax.iong.javabean0301;  
+2.  
+3.import java.beans.BeanInfo;  
+4.import java.beans.Introspector;  
+5.import java.beans.PropertyDescriptor;  
+6.import java.lang.reflect.Method;  
+7.  
+8.import org.junit.Test;  
+9.  
+10.public class Test1 {  
+11.  
+12.    @Test  
+13.    public void tes1() throws Exception {  
+14.        Class<?> cl = Class.forName("com.javax.iong.javabean0301.Person");  
+15.        // 在bean上进行内省  
+16.        BeanInfo beaninfo = Introspector.getBeanInfo(cl, Object.class);  
+17.        PropertyDescriptor[] pro = beaninfo.getPropertyDescriptors();  
+18.        Person p = new Person();  
+19.        System.out.print("Person的属性有:");  
+20.        for (PropertyDescriptor pr : pro) {  
+21.            System.out.print(pr.getName() + " ");  
+22.        }  
+23.        System.out.println("");  
+24.        for (PropertyDescriptor pr : pro) {  
+25.            // 获取beal的set方法  
+26.            Method writeme = pr.getWriteMethod();  
+27.            if (pr.getName().equals("name")) {  
+28.                // 执行方法  
+29.                writeme.invoke(p, "xiong");  
+30.            }  
+31.            if (pr.getName().equals("age")) {  
+32.                writeme.invoke(p, 23);  
+33.            }  
+34.            // 获取beal的get方法  
+35.            Method method = pr.getReadMethod();  
+36.            System.out.print(method.invoke(p) + " ");  
+37.  
+38.        }  
+39.    }  
+40.  
+41.    @Test  
+42.    public void test2() throws Exception {  
+43.        PropertyDescriptor pro = new PropertyDescriptor("name", Person.class);  
+44.        Person preson=new Person();  
+45.        Method  method=pro.getWriteMethod();  
+46.        method.invoke(preson, "xiong");  
+47.        System.out.println(pro.getReadMethod().invoke(preson));  
+48.    }  
+49.}  
+)  
+2.BeanInfo类
+(BeanInfo bif = Introspector.getBeanInfo(TFeeItemR.class);
+       PropertyDescriptor[] pd = bif.getPropertyDescriptors();
+       //System.out.println(bif.getDefaultPropertyIndex());
+       for(int i=0;i<pd.length;i++){
+            System.out.println("name:"+pd[i].getName());
+            System.out.println("read method name:"+pd[i].
+           getReadMethod ().getName());
+           System.out.println("displayname:"+pd[i].getDisplayName());
+        }
+   MethodDescriptor[] md = bif.getMethodDescriptors();
+    System.out.println("111111***********************************");
+    for(int m=0;m<md.length;m++){
+        System.out.println("name:"+md[m].getName());
+        System.out.println("method name:"+md[m].getMethod().getName());
+        System.out.println("displayname:"+md[m].getDisplayName());
+     }
+   System.out.println("2222222222***********************************");
+   BeanDescriptor bd = bif.getBeanDescriptor();
+   System.out.println("display name：" + bd.getDisplayName());
+    System.out.println("name：" + bd.getName());
+    //System.out.println("CustomizerClass name " +bd.getCustomizerClass  ().getName());
+     EventSetDescriptor[] esd = bif.getEventSetDescriptors();
+     for(int m=0;m<esd.length;m++){
+          System.out.println("name:"+esd[m].getName());
+          System.out.println("method name:"+esd[m].getGetListenerMethod().getName());
+            System.out.println("method name:"+esd[m].getRemoveListenerMethod().getName());
+            System.out.println("method name:"+esd[m].getAddListenerMethod().getName());
+            System.out.println("displayname:"+esd[m].getDisplayName());
+  }
+)  
+3.PropertyDescriptor类
+(PropertyDescriptor类表示JavaBean类通过存储器导出一个属性。主要方法：
+1、getPropertyType()，获得属性的Class对象。
+2、getReadMethod()，获得用于读取属性值的方法；getWriteMethod()，获得用于写入属性值的方法。
+3、hashCode()，获取对象的哈希值。
+4、setReadMethod(Method readMethod)，设置用于读取属性值的方法；setWriteMethod(MethodwriteMethod)，设置用于写入属性值的方法；)  
+4.MethodDescriptor类
