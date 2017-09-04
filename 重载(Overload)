@@ -8,3 +8,34 @@
 被重载的方法可以声明新的或更广的检查异常；
 方法能够在同一个类中或者在一个子类中被重载。
 无法以返回值类型作为重载函数的区分标准。
+
+重载是同样的一个方法写多次变量修饰符不一样，当调用方法时，会自动判断给入数的类型，选取其中符合的方法。
+public class Overloading {
+    private static int i = 1;
+    private static double l = 3.1415;
+    private static String k = "我是栗子";
+
+    //参数类型不同
+    public void test(int a){
+        System.out.println("你输入了整数:"+a);
+    }   
+ 
+    public void test(double a){
+        System.out.println("你输入了浮点数:"+a);
+    }   
+ 
+    public void test(String a){
+        System.out.println("你输入了字符串:"+a);
+    }   
+ 
+    public static void main(String[] args){
+        Overloading lizi = new Overloading();
+        lizi.test(i);
+        lizi.test(l);
+        lizi.test(k);
+    }
+}
+输出结果：
+你输入了整数：1
+你输入了浮点数：3.1415
+你输入了字符串：我是栗子
