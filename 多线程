@@ -488,7 +488,9 @@ class MyRunnable implements Runnable { 
 340.}  
 ）
 七、线程的生命周期
-（
+新-->可运行<-->运行-->死
+           ↖               ↙
+          等待/阻塞/睡眠
 
 
 
