@@ -1,0 +1,25 @@
+1.除非在try、catch块中调用了退出虚拟机的方法，否则finally块总会被执行，即使包含return和throw语句，也要先执行finally后再来执行return或throw，如果finally块里也使用了return或throw等导致方法终止的语句，finally块已经终止了方法，系统将不会跳回去执行try块、catch块里的任何代码5.在java7中增强了try语句，在try关键字后紧跟一对圆括号，圆括号可以声明、初始化一个或多个资源（必须在程序结束时显示关闭的资源如，数据库链接、网络链接等），try语句在该语句结束时自动关闭这些资源。为了保证try语句可以正常关闭资源，这些资源实现类必须实现AutoCloseable或Closeable接口
+
+public class AutoCloseTest  
+{  
+    public static void main(String[] args)   
+      throws IOException  
+  {  
+       try (  
+          // 声明、初始化两个可关闭的资源  
+            // try语句会自动关闭这两个资源。  
+           BufferedReader br = new BufferedReader(  
+                new FileReader("AutoCloseTest.java"));  
+           PrintStream ps = new PrintStream(new  
+                FileOutputStream("a.txt")))  
+        {  
+            // 使用两个资源  
+            System.out.println(br.readLine());  
+           ps.println("庄生晓梦迷蝴蝶");  
+        }  
+   }  
+}  
+隐式的finally块存在，因此这个try语句可以既没有catch块，也没有finally块。在java7中所有的资源类进行了改写，实现了AutoCloseable或Closeable接口
+2.子类方法声明抛出的异常类型应该是父类方法声明抛出的异常类型的子类或相同，子类方法声明抛出的异常不允许比父类方法声明抛出的异常多。
+3.自定义异常应该继承Exception基类，自定义Runtime异常，应继承RuntimeException基类。定义异常类时通常需要提供两个构造器：一个是无参构造器；另一个是带一个字符串参数的构造器
+4.异常链，捕获一个异常然后接着抛出另一个异常，把原始异常信息隐藏起来，仅向上提供必要的异常提示信息的处理方式，可以保证底层异常不会扩散到表现层。
