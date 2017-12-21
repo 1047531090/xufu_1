@@ -1,0 +1,262 @@
+一、作用：
+  1.会自动的绑定来自Model中的一个属性值到当前form对应的实体对象，默认是command属性，这样我们就可以在form表单体里面方便的使用该对象的属性了
+  2.支持在提交表单的时候使用除GET和POST之外的其他方法进行提交，包括DELETE和PUT等
+二、支持绑定表单对象
+  我们先来看如下使用form标签的一个示例：
+ 
+<form:form action="formTag/form.do" method="post">  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><form:input path="name"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><form:input path="age"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form:form>  
+ 
+ 
+       这个时候如果Model中存在一个属性名称为command的javaBean，而且该javaBean拥有属性name和age的时候，在渲染上面的代码时就会取command的对应属性值赋给对应标签的值。如在上面的代码中，假设Model中存在一个属性名称为command的javaBean，且它的name和age属性分别为“Zhangsan”和“36”时，那么它在渲染时就会生成如下一段代码：
+Html代码 复制代码 收藏代码
+<form id="command" action="formTag/form.do" method="post">  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><input id="name" name="name" type="text" value="ZhangSan"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><input id="age" name="age" type="text" value="36"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form>  
+[html] view plain copy
+<form id="command" action="formTag/form.do" method="post">  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><input id="name" name="name" type="text" value="ZhangSan"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><input id="age" name="age" type="text" value="36"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form>  
+ 
+       从上面生成的代码中，我们可以看出，当没有指定form标签的id时它会自动获取该form标签绑定的Model中对应属性名称作为id，而对于input标签在没有指定id的情况下它会自动获取path指定的属性作为id和name。
+       我们指定form默认自动绑定的是Model的command属性值，那么当我的form对象对应的属性名称不是command的时候，应该怎么办呢？对于这种情况，Spring给我们提供了一个commandName属性，我们可以通过该属性来指定我们将使用Model中的哪个属性作为form需要绑定的command对象。除了commandName属性外，指定modelAttribute属性也可以达到相同的效果。这里假设上面代码中我们存放在Model中的是user对象而不是默认的command对象，那么我们的代码就可以如下定义了：
+Jsp代码 复制代码 收藏代码
+<form:form action="formTag/form.do" method="post" commandName="user">  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><form:input path="name"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><form:input path="age"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form:form>  
+ 
+1.1.2  支持全部的Http请求方法
+
+Jsp代码 复制代码 收藏代码
+<form:form action="formTag/form.do" method="delete" modelAttribute="user">  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><form:input path="name"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><form:input path="age"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form:form>  
+ 
+在上面代码中我们设定了该form的提交方法是delete，这样在后台我们就可以给对应的请求方法的RequestMapping加上method为RequestMethod.DELETE的限制。我们来看一下上面的代码在进行渲染的时候会生成怎样的Html代码，其生成的代码如下所示：
+Html代码 复制代码 收藏代码
+<form id="user" action="formTag/form.do" method="post">  
+    <input type="hidden" name="_method" value="delete"/>  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><input id="name" name="name" type="text" value="ZhangSan"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><input id="age" name="age" type="text" value="36"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form>  
+[html] view plain copy
+<form id="user" action="formTag/form.do" method="post">  
+    <input type="hidden" name="_method" value="delete"/>  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><input id="name" name="name" type="text" value="ZhangSan"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><input id="age" name="age" type="text" value="36"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form>  
+ 
+从它生成的代码我们可以看出，Spring在实现除GET和POST之外的请求方法时，还是使用的POST方法进行请求，然后给表单加上了一个隐藏域，用以表示真正的请求方法，这个隐藏域的名称默认是“_method”。上面这样定义之后是不是就意味着我们可以以delete方式访问到“formTag/form.do”了呢？答案是不行的。这样定义我们只是多加了一个用以表示请求方法的隐藏域而已，实际的请求方式还是POST。Spring为我们提供了一个Filter——HiddenHttpMethodFilter，通过这个Filter我们可以把以POST方式传递过来的表示实际请求方式的参数转换为对应的真正的Http请求方法。所以这个时候我们还需要在web.xml中加上如下代码：
+Xml代码 复制代码 收藏代码
+<filter>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>  
+</filter>  
+<filter-mapping>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+[xml] view plain copy
+<filter>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>  
+</filter>  
+<filter-mapping>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+ 
+       注意：HiddenHttpMethodFilter只能对以POST方式进行传递的表示请求方式的隐藏域转换为真正的Http请求方式。当我们直接在form：form标签的method中使用除GET和POST方法以外的其他方法时，Spring会自动生成以POST方式进行传递的表单以及对应的隐藏域。所以当我们需要手动的设置表示请求方法的隐藏域时，我们就需要指定表单的请求方式为POST，为GET将不会生效。
+Jsp代码 复制代码 收藏代码
+<form:form action="formTag/form.do" method="post" modelAttribute="user">  
+    <input type="hidden" name="_method" value="head"/>  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><form:input path="name"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><form:input path="age"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form:form>  
+ 
+上面代码就是一个手动定义请求方式的隐藏域的示例。这里表示请求方式的隐藏域的名称默认是“_method”，如果不想使用这个默认值的话，我们也可以通过form:form标签的methodParam属性来指定。如下面这个示例：
+Jsp代码 复制代码 收藏代码
+<form:form action="formTag/form.do" method="post" methodParam="requestMethod" modelAttribute="user">  
+    <input type="hidden" name="requestMethod" value="head"/>  
+    <table>  
+        <tr>  
+            <td>Name:</td><td><form:input path="name"/></td>  
+        </tr>  
+        <tr>  
+            <td>Age:</td><td><form:input path="age"/></td>  
+        </tr>  
+        <tr>  
+            <td colspan="2"><input type="submit" value="提交"/></td>  
+        </tr>  
+    </table>  
+</form:form>  
+ 
+同时我们也要告诉HiddenHttpMethodFilter我们是使用哪个表单参数作为methodParam，所以我们需要在配置HiddenHttpMethodFilter的时候指明methodParam对应的值。
+Xml代码 复制代码 收藏代码
+<filter>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>  
+   <init-param>  
+       <param-name>methodParam</param-name>  
+       <param-value>requestMethod</param-value>  
+   </init-param>  
+</filter>  
+<filter-mapping>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+[xml] view plain copy
+<filter>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>  
+   <init-param>  
+       <param-name>methodParam</param-name>  
+       <param-value>requestMethod</param-value>  
+   </init-param>  
+</filter>  
+<filter-mapping>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+ 
+       另外需要注意的是在有Multipart请求处理的时候HiddenHttpMethodFilter需要在Multipart处理之后执行，因为在处理Multipart时需要从POST请求体中获取参数。所以我们通常会在HiddenHttpMethodFilter之前设立一个MultipartFilter。MultipartFilter默认会去寻找一个名称为filterMultipartResolver的MultipartResolver bean对象来对当前的请求进行封装。所以当你定义的MultipartResolver的名称不为filterMultipartResolver的时候就需要在定义MultipartFilter的时候通过参数multipartResolverBeanName来指定。
+Xml代码 复制代码 收藏代码
+<filter>  
+   <filter-name>multipartFilter</filter-name>  
+   <filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>  
+   <init-param>  
+       <param-name>multipartResolverBeanName</param-name>  
+       <param-value>multipartResolver</param-value>  
+   </init-param>  
+</filter>  
+<filter-mapping>  
+   <filter-name>multipartFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+  
+<filter>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>  
+   <init-param>  
+       <param-name>methodParam</param-name>  
+       <param-value>requestMethod</param-value>  
+   </init-param>  
+</filter>  
+<filter-mapping>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+[xml] view plain copy
+<filter>  
+   <filter-name>multipartFilter</filter-name>  
+   <filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>  
+   <init-param>  
+       <param-name>multipartResolverBeanName</param-name>  
+       <param-value>multipartResolver</param-value>  
+   </init-param>  
+</filter>  
+<filter-mapping>  
+   <filter-name>multipartFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+  
+<filter>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>  
+   <init-param>  
+       <param-name>methodParam</param-name>  
+       <param-value>requestMethod</param-value>  
+   </init-param>  
+</filter>  
+<filter-mapping>  
+   <filter-name>hiddenHttpMethodFilter</filter-name>  
+   <url-pattern>/*</url-pattern>  
+</filter-mapping>  
+ 
+ 
+  http://blog.csdn.net/hp_yangpeng/article/details/51906654
+  
+  
+  
+  
+  
+  
+  
